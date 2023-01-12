@@ -645,7 +645,6 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
     print(c)
     return(c)
 
-
 ########### CONSULTAR SALDO ###########
 
 def consulta_saldo(nav):
@@ -751,8 +750,15 @@ def consulta_saldo(nav):
     for j in range(len(base_filtrada)):
         base_filtrada['PESO BARRAS'][j] = float(base_filtrada['PESO BARRAS'][j]) / 10
 
+    tabelona = tabelona.rename(columns={'Código':'MATERIAL'})
 
 
+    df_final = pd.merge(tabelona,base_filtrada,on='MATERIAL')
+    df_final['comparar'] = df_final['Saldo'] > df_final['PESO BARRAS'] 
+
+    df_final = df_final.loc[df_final['comparar'] == True]
+
+    return(df_final)
 
 
 nav = acessar_innovaro()
@@ -764,6 +770,8 @@ login(nav)
 menu_innovaro(nav)
 
 wks1, base, base_filtrada  = planilha_serra_transf(filename)
+
+df_final = consulta_saldo(nav)
 
 
 
