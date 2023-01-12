@@ -10,17 +10,21 @@ from selenium.webdriver.support.ui import WebDriverWait
 import gspread
 from selenium.webdriver.common.action_chains import ActionChains
 
-#link1 = "http://192.168.3.141/"
-link1 = 'http://cemag.innovaro.com.br/sistema'
-#link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-nav = webdriver.Chrome()
-time.sleep(2)
-nav.get(link1)
-
 filename = "service_account.json"
 
+def acessar_innovaro():
+    #link1 = "http://192.168.3.141/"
+    link1 = 'http://cemag.innovaro.com.br/sistema'
+    #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
+    nav = webdriver.Chrome()
+    time.sleep(2)
+    nav.get(link1)
+
+    return(nav)
+
 ########### LOGIN ###########
-def login():
+
+def login(nav):
     #logando 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]'))).send_keys("luan araujo")
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("luanaraujo")
@@ -31,11 +35,16 @@ def login():
 
     time.sleep(2)
 
+########### MENU ###########
+
+def menu_innovaro(nav):
     #abrindo menu
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
 
     time.sleep(2)
+
+def menu_apontamento(nav):
 
     #clicando em produção
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[7]/span[2]'))).click()
@@ -52,9 +61,77 @@ def login():
 
     time.sleep(3)
 
-login()
+def menu_transf(nav):
+    
+    #abrindo estoque
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[4]/span[2]'))).click()
 
-########### ACESSANDO PLANILHAS ###########
+    time.sleep(2)
+
+    #clicando em transferencia
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[13]/span[2]'))).click()
+
+    time.sleep(2)
+
+    #clicando em transf entre deposito
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+
+    time.sleep(3)
+
+########### ACESSANDO PLANILHAS DE TRANSFERÊNCIA ###########
+
+def planilha_serra_transf(filename):
+
+    #SERRA#
+
+    #data de hoje
+    data_realizado = datetime.now()
+    ts = pd.Timestamp(data_realizado)
+    data_realizado = data_realizado.strftime('%d/%m/%Y')
+
+    sheet = 'RQ PC-001-000 (APONTAMENTO SERRA)'
+    worksheet1 = 'USO DO PCP'
+
+    sa = gspread.service_account(filename)
+    sh = sa.open(sheet)
+
+    wks1 = sh.worksheet(worksheet1)
+
+    headers = wks1.row_values(2)
+
+    base = wks1.get()
+    base = pd.DataFrame(base)
+    base = base.set_axis(headers, axis=1, inplace=False)[2:]
+
+    ########### Tratando planilhas ###########
+
+    #ajustando datas
+    for i in range(len(base)+2):
+        try:
+            if base['DATA'][i] == "":
+                base['DATA'][i] = base['DATA'][i-1]
+        except:
+            pass
+
+    i = None
+
+    #filtrando peças que não foram apontadas
+    base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
+
+    #filtrando data de hoje
+    base_filtrada = base_filtrada.loc[base_filtrada.DATA == data_realizado]
+
+    base_filtrada = base_filtrada[['DATA','MATERIAL','PESO BARRAS']]
+
+    quebrando_material = base_filtrada["MATERIAL"].str.split(" - ", n = 1, expand = True)
+
+    base_filtrada['MATERIAL'] = quebrando_material[0]
+
+    i = None
+
+    return(wks1, base, base_filtrada)
+
+########### ACESSANDO PLANILHAS DE APONTAMENTO ###########
 
 #### SERRA ####
 
@@ -183,7 +260,122 @@ def planilha_usinagem(filename):
 
     return(wks1, base, base_filtrada, pessoa)
 
-########### PREENCHIMENTO ###########
+########### PREENCHIMENTO TRASNFERÊNCIA DE MP ###########
+
+def preenchendo_serra_transf(data, pessoa, peca, qtde, wks1, c, i):
+
+    try:
+        nav.switch_to.default_content()
+    except:
+        pass
+
+    #mudando iframe
+    iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+    nav.switch_to.frame(iframe1)
+    
+    #Insert
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
+
+    #Classe
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[4]/div/input'))).send_keys(Keys.TAB)
+    
+    #Solicitante
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[6]/div/input'))).send_keys(Keys.TAB)
+    
+    #Deposito de origem
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[8]/div/input'))).send_keys('central')
+    time.sleep(1)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[8]/div/input'))).send_keys(Keys.TAB)
+
+    #Deposito de destino
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[10]/div/input'))).send_keys('serra')
+    time.sleep(1)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[10]/div/input'))).send_keys(Keys.TAB)
+
+    #Recurso
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[12]/div/input'))).send_keys(peca)
+    time.sleep(1)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[12]/div/input'))).send_keys(Keys.TAB)
+    
+    #Lote
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[14]/div/input'))).send_keys(Keys.TAB)
+
+    #Campo vazio
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[16]/div/input'))).send_keys(Keys.TAB)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[17]/div/input'))).send_keys(Keys.TAB)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[19]/div/input'))).send_keys(Keys.TAB)
+
+    #Quantidade
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[21]/div/input'))).send_keys(qtde)
+    time.sleep(1)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[21]/div/input'))).send_keys(Keys.TAB)
+    
+    #click em campo fantasma
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
+
+    time.sleep(2)
+
+    #click em confirmar
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
+
+    time.sleep(2)
+
+    c = c+2
+
+    print(c)
+    return(c)
+
+def selecionar_todos(nav):
+
+    #selecinar todos os campos
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[1]/td[1]/div'))).click()
+    time.sleep(1)
+
+    #aprovar
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[1]/span[2]/p'))).click()
+    time.sleep(1)
+
+    try:
+        nav.switch_to.default_content()
+    except:
+        pass
+
+    #fechar pop-up
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[2]/td/div/button'))).click()
+
+    #mudando iframe
+    iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+    nav.switch_to.frame(iframe1)
+
+    #baixar
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[3]/span[2]/p'))).click()
+    time.sleep(1)
+
+    #data 
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.DELETE)
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr/td[1]/input'))).send_keys(data)
+    time.sleep(1)
+
+    try:
+        nav.switch_to.default_content()
+    except:
+        pass
+
+    #confirmar baixa
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
+    time.sleep(10)
+    
+    #texto erro
+    try:
+        text_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[2]/td/div/button'))).click()
+    except:
+        #gravar
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/span[2]/p'))).click()
+        time.sleep(10)
+
+########### PREENCHIMENTO APONTAMENTO DE PEÇA ###########
 
 def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
 
@@ -300,7 +492,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
 
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
         time.sleep(2)
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[34]/span[2]'))).click()
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
         time.sleep(2)
@@ -434,7 +626,7 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
 
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
         time.sleep(2)
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[34]/span[2]'))).click()
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
         time.sleep(2)
@@ -453,64 +645,233 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
     print(c)
     return(c)
 
-contador = 0
 
-while contador < 3:
+########### CONSULTAR SALDO ###########
 
-    contador = contador + 1
+def consulta_saldo(nav):
+    
+    #abrindo estoque
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[4]/span[2]'))).click()
+    time.sleep(0.5)
 
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(2)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(2)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(2)
+    #consultas
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[7]/span[2]'))).click()
+    time.sleep(0.5)
 
-    wks1, base, base_filtrada, pessoa  = planilha_serra(filename)
+    #saldo de recurso
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[17]/span[2]'))).click()
+    time.sleep(0.5)
 
-    c = 3
+    try:
+        nav.switch_to.default_content()
+    except:
+        pass
 
-    i = 0
+    #mudando iframe
+    iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+    nav.switch_to.frame(iframe1)
 
-    for i in range(len(base)+5): # serra
+    #data base
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.DELETE)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('h')
+    time.sleep(1)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.TAB)
+    
+    #recursos
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.DELETE)
 
-        print("i: ", i)
-        try:
-            peca = base_filtrada['CÓDIGO'][i]
-            qtde = str(base_filtrada['QNT'][i])
-            data = base_filtrada['DATA'][i]
-            pessoa = pessoa
-            c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
-            print("c: ", c)
-        except:
-            pass
+    wks1, base, base_filtrada  = planilha_serra_transf(filename)
 
-    print('indo para usinagem')
+    base_filtrada = base_filtrada.reset_index(drop=True)
 
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(2)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(2)
+    for i in range(0,2): #len(base_filtrada)):
+        recurso = base_filtrada['MATERIAL'][i]
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(recurso + ';')
+    
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.TAB)
+    time.sleep(1)
 
-    wks1, base, base_filtrada, pessoa  = planilha_usinagem(filename)
+    try:
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/span[2]/p'))).click()
+    except:
+        pass
 
-    c = 3
+    try:
+        nav.switch_to.default_content()
+    except:
+        pass
 
-    i = 0
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]/span[2]/p'))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]/span[2]/p'))).click()
+    time.sleep(4)
 
-    for i in range(len(base)+5):# usinagem
+    #mudando iframe
+    iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+    nav.switch_to.frame(iframe1)
+
+    table_prod = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table')))
+    table_html_prod = table_prod.get_attribute('outerHTML')
         
-        print("i: ", i)
-        try:
-            peca = base_filtrada['CÓDIGO'][i]
-            qtde = str(base_filtrada['QNT'][i])
-            data = base_filtrada['DATA'][i]
-            pessoa = pessoa
-            c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
-            print("c: ", c)
-        except:
-            pass
+    tabelona = pd.read_html(str(table_html_prod), header=None)
+    tabelona = tabelona[0]
+
+    tabelona = tabelona.droplevel(level=0,axis=1)
+    tabelona = tabelona.droplevel(level=0,axis=1)
+
+    tabelona = tabelona[['Código','Saldo']]
+
+    tabelona = tabelona.dropna()
+
+    tabelona = tabelona.reset_index(drop=True)
+
+    for i in range(len(tabelona)):
+        if len(tabelona['Saldo'][i]) > 6 :
+            tabelona['Saldo'][i] = tabelona['Saldo'][i].replace(',','')
+            tabelona['Saldo'][i] = tabelona['Saldo'][i].replace('.','')
+
+    tabelona = tabelona[:2]
+
+    try:
+        for j in range(len(tabelona)):
+            if len(tabelona['Saldo'][j]) >= 6 :
+                tabelona['Saldo'][j] = float(tabelona['Saldo'][j]) / 10000
+    except:
+        pass
+
+    tabelona['Saldo'] = tabelona['Saldo'].astype(float)
+
+    for i in range(len(base_filtrada)):
+        if len(base_filtrada['PESO BARRAS'][i]) > 1:
+            base_filtrada['PESO BARRAS'][i] = base_filtrada['PESO BARRAS'][i].replace(',','')
+            base_filtrada['PESO BARRAS'][i] = base_filtrada['PESO BARRAS'][i].replace('.','')
+
+    for j in range(len(base_filtrada)):
+        base_filtrada['PESO BARRAS'][j] = float(base_filtrada['PESO BARRAS'][j]) / 10
+
+
+
+
+
+nav = acessar_innovaro()
+
+time.sleep(4)
+
+login(nav)
+
+menu_innovaro(nav)
+
+wks1, base, base_filtrada  = planilha_serra_transf(filename)
+
+
+
+########### LOOP TRANSFERÊNCIA ###########
+
+nav = acessar_innovaro()
+
+time.sleep(2)
+
+login(nav)
+
+menu_innovaro(nav)
+
+menu_transf(nav)
+
+wks1, base, base_filtrada, pessoa  = planilha_serra_transf(filename)
+
+c = 3
+
+i = 0
+
+for i in range(len(base)+1): # serra
+
+    print("i: ", i)
+    try:
+        peca = base_filtrada['MATERIAL'][i]
+        qtde = str(base_filtrada['PESO BARRAS'][i])
+        data = base_filtrada['DATA'][i]
+        c = preenchendo_serra_transf(data,pessoa,peca,qtde,wks1,c,i)
+        print("c: ", c)
+    except:
+        pass
+    
+selecionar_todos(nav)
+
+nav.quit()
+
+
+
+
+
+
+
+
+########### LOOP APONTAMENTOS ###########
+
+nav = acessar_innovaro()
+
+login(nav)
+
+menu_innovaro(nav)
+
+menu_apontamento(nav)
+
+nav.switch_to.default_content()
+WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+time.sleep(2)
+WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+time.sleep(2)
+WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+time.sleep(2)
+
+wks1, base, base_filtrada, pessoa  = planilha_serra(filename)
+
+c = 3
+
+i = 0
+
+for i in range(len(base)+5): # serra
+
+    print("i: ", i)
+    try:
+        peca = base_filtrada['CÓDIGO'][i]
+        qtde = str(base_filtrada['QNT'][i])
+        data = base_filtrada['DATA'][i]
+        pessoa = pessoa
+        c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
+        print("c: ", c)
+    except:
+        pass
+
+print('indo para usinagem')
+
+nav.switch_to.default_content()
+WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+time.sleep(2)
+WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+time.sleep(3)
+WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+time.sleep(2)
+
+wks1, base, base_filtrada, pessoa  = planilha_usinagem(filename)
+
+c = 3
+
+i = 0
+
+for i in range(len(base)+5):# usinagem
+    
+    print("i: ", i)
+    try:
+        peca = base_filtrada['CÓDIGO'][i]
+        qtde = str(base_filtrada['QNT'][i])
+        data = base_filtrada['DATA'][i]
+        pessoa = pessoa
+        c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
+        print("c: ", c)
+    except:
+        pass
+
+nav.quit()
