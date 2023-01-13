@@ -14,8 +14,8 @@ filename = "service_account.json"
 
 def acessar_innovaro():
     #link1 = "http://192.168.3.141/"
-    #link1 = 'http://cemag.innovaro.com.br/sistema'
-    link1 = 'http://devcemag.innovaro.com.br:81/sistema'
+    link1 = 'http://cemag.innovaro.com.br/sistema'
+    #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
     nav = webdriver.Chrome()
     time.sleep(2)
     nav.get(link1)
@@ -181,7 +181,7 @@ def planilha_serra(filename):
     i = None
 
     #filtrando peças que não foram apontadas
-    #base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
+    base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
 
     #filtrando data de hoje
     base_filtrada = base.loc[base.DATA == data_realizado]
@@ -200,7 +200,7 @@ def planilha_serra(filename):
 
     base_filtrada = base_filtrada[['DATA','CÓDIGO','QNT']]
 
-    base_filtrada = base_filtrada.reset_index(drop=True)
+    #base_filtrada = base_filtrada.reset_index(drop=True)
 
     pessoa = '4209'
 
@@ -498,9 +498,14 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         wks1.update('R' + str(i+1), texto_erro)
 
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+        try:
+            nav.switch_to.default_content()
+        except: 
+            pass
+
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/table/tbody/tr/td[1]/div/table/tbody/tr/td[2]'))).click()
         time.sleep(2)
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[34]/span[2]'))).click()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
         time.sleep(2)
@@ -722,14 +727,16 @@ def consulta_saldo(nav):
     tabelona = tabelona[0]
     tabelona = tabelona.droplevel(level=0,axis=1)
     tabelona = tabelona.droplevel(level=0,axis=1)
-    tabelona = tabelona[['Unnamed: 0_level_2','Saldo']]
-    tabelona['Saldo'] = tabelona.Saldo.shift(-1)
+    tabelona = tabelona[['Código','Saldo']]
+    #tabelona = tabelona[['Unnamed: 0_level_2','Saldo']]
+    #tabelona['Saldo'] = tabelona.Saldo.shift(-1)
     tabelona = tabelona.dropna()
     tabelona = tabelona.reset_index(drop=True)
+    tabelona = tabelona[:1]
 
-    quebrando_material = tabelona["Unnamed: 0_level_2"].str.split(" ", n = 1, expand = True)
+    #quebrando_material = tabelona["Unnamed: 0_level_2"].str.split(" ", n = 1, expand = True)
 
-    tabelona['Unnamed: 0_level_2'] = quebrando_material[0]
+    #tabelona['Unnamed: 0_level_2'] = quebrando_material[0]
 
     for i in range(len(tabelona)):
         if len(tabelona['Saldo'][i]) > 6 :
@@ -745,8 +752,9 @@ def consulta_saldo(nav):
 
     tabelona['Saldo'] = tabelona['Saldo'].astype(float)
 
-    tabelona = tabelona.rename(columns={'Unnamed: 0_level_2':'MATERIAL'})
-
+    #tabelona = tabelona.rename(columns={'Unnamed: 0_level_2':'MATERIAL'})
+    tabelona = tabelona.rename(columns={'Código':'MATERIAL'})
+    
     df_final = pd.merge(tabelona,base_filtrada,on='MATERIAL')
     
     df_final['comparar'] = df_final['Saldo'] > df_final['PESO BARRAS'] 
@@ -754,6 +762,8 @@ def consulta_saldo(nav):
     df_final = df_final.loc[df_final['comparar'] == True]
 
     return(df_final)
+
+########### CONSULTAR SALDO ###########
 
 nav = acessar_innovaro()
 
@@ -789,7 +799,7 @@ c = 3
 
 i = 0
 
-if not len(base_filtrada == 0):
+if not len(base_filtrada) == 0:
 
     for i in range(len(base)+1): # serra
 
@@ -835,7 +845,7 @@ c = 3
 
 i = 0
 
-if not len(base_filtrada == 0):
+if not len(base_filtrada) == 0:
 
     for i in range(len(base)+5): # serra
 
@@ -849,6 +859,8 @@ if not len(base_filtrada == 0):
             print("c: ", c)
         except:
             pass
+
+######## APONTAMENTO USINAGEM ########
 
 print('indo para usinagem')
 
@@ -866,7 +878,7 @@ c = 3
 
 i = 0
 
-if not len(base_filtrada == 0):
+if not len(base_filtrada) == 0:
 
     for i in range(len(base)+5):# usinagem
         
