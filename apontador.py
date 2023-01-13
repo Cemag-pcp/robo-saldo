@@ -14,8 +14,8 @@ filename = "service_account.json"
 
 def acessar_innovaro():
     #link1 = "http://192.168.3.141/"
-    link1 = 'http://cemag.innovaro.com.br/sistema'
-    #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
+    #link1 = 'http://cemag.innovaro.com.br/sistema'
+    link1 = 'http://devcemag.innovaro.com.br:81/sistema'
     nav = webdriver.Chrome()
     time.sleep(2)
     nav.get(link1)
@@ -116,18 +116,28 @@ def planilha_serra_transf(filename):
     i = None
 
     #filtrando peças que não foram apontadas
-    base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
+    #base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
 
     #filtrando data de hoje
-    base_filtrada = base_filtrada.loc[base_filtrada.DATA == data_realizado]
+    base_filtrada = base.loc[base.DATA == data_realizado]
 
-    base_filtrada = base_filtrada[['DATA','MATERIAL','PESO BARRAS']]
+    base_filtrada =  base_filtrada[['DATA','MATERIAL','PESO BARRAS']]
 
     quebrando_material = base_filtrada["MATERIAL"].str.split(" - ", n = 1, expand = True)
 
     base_filtrada['MATERIAL'] = quebrando_material[0]
+    
+    base_filtrada = base_filtrada.reset_index(drop=True)
+    
+    for i in range(len(base_filtrada)):
+        if len(base_filtrada['PESO BARRAS'][i]) > 1:
+            base_filtrada['PESO BARRAS'][i] = base_filtrada['PESO BARRAS'][i].replace(',','')
+            base_filtrada['PESO BARRAS'][i] = base_filtrada['PESO BARRAS'][i].replace('.','')
 
-    i = None
+    for j in range(len(base_filtrada)):
+        base_filtrada['PESO BARRAS'][j] = float(base_filtrada['PESO BARRAS'][j]) / 10
+
+    base_filtrada = base_filtrada.groupby(['DATA','MATERIAL']).sum().reset_index()
 
     return(wks1, base, base_filtrada)
 
@@ -171,10 +181,10 @@ def planilha_serra(filename):
     i = None
 
     #filtrando peças que não foram apontadas
-    base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
+    #base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
 
     #filtrando data de hoje
-    base_filtrada = base_filtrada.loc[base_filtrada.DATA == data_realizado]
+    base_filtrada = base.loc[base.DATA == data_realizado]
 
     #inserindo 0 antes do código da peca
     base_filtrada['CÓDIGO'] = base_filtrada['CÓDIGO'].astype(str)
@@ -189,6 +199,8 @@ def planilha_serra(filename):
     i = None
 
     base_filtrada = base_filtrada[['DATA','CÓDIGO','QNT']]
+
+    base_filtrada = base_filtrada.reset_index(drop=True)
 
     pessoa = '4209'
 
@@ -262,7 +274,7 @@ def planilha_usinagem(filename):
 
 ########### PREENCHIMENTO TRASNFERÊNCIA DE MP ###########
 
-def preenchendo_serra_transf(data, pessoa, peca, qtde, wks1, c, i):
+def preenchendo_serra_transf(data, peca, qtde, wks1, c, i):
 
     try:
         nav.switch_to.default_content()
@@ -364,6 +376,7 @@ def selecionar_todos(nav):
 
     #confirmar baixa
     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
+    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
     time.sleep(10)
     
     #texto erro
@@ -378,10 +391,6 @@ def selecionar_todos(nav):
 ########### PREENCHIMENTO APONTAMENTO DE PEÇA ###########
 
 def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
-
-    # hora = datetime.now()
-    # hora = hora.strftime("%H:%M:%S")
-    # wks1.update('E' + str(i+2), hora)
 
     try:
         nav.switch_to.default_content()
@@ -427,7 +436,6 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         pass
 
     #data
-    
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.CONTROL + 'a')
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.DELETE)
     time.sleep(1)
@@ -488,7 +496,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('Q' + str(i+1), texto_erro)
+        wks1.update('R' + str(i+1), texto_erro)
 
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
         time.sleep(2)
@@ -500,13 +508,9 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         c = 3
 
     except:
-        wks1.update('Q' + str(i+1), 'OK ROBS!')
+        wks1.update('Q' + str(i+1), 'OK ROBÔ!')
         print('deu bom')
         c = c + 2
-
-    # hora = datetime.now()
-    # hora = hora.strftime("%H:%M:%S")
-    # wks1.update('F' + str(i+2), hora)
 
     print(c)
     return(c)
@@ -676,7 +680,7 @@ def consulta_saldo(nav):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('h')
     time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.TAB)
-    
+    time.sleep(1)
     #recursos
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).click()
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
@@ -686,7 +690,7 @@ def consulta_saldo(nav):
 
     base_filtrada = base_filtrada.reset_index(drop=True)
 
-    for i in range(0,2): #len(base_filtrada)):
+    for i in range(len(base_filtrada)):
         recurso = base_filtrada['MATERIAL'][i]
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(recurso + ';')
     
@@ -716,22 +720,21 @@ def consulta_saldo(nav):
         
     tabelona = pd.read_html(str(table_html_prod), header=None)
     tabelona = tabelona[0]
-
     tabelona = tabelona.droplevel(level=0,axis=1)
     tabelona = tabelona.droplevel(level=0,axis=1)
-
-    tabelona = tabelona[['Código','Saldo']]
-
+    tabelona = tabelona[['Unnamed: 0_level_2','Saldo']]
+    tabelona['Saldo'] = tabelona.Saldo.shift(-1)
     tabelona = tabelona.dropna()
-
     tabelona = tabelona.reset_index(drop=True)
+
+    quebrando_material = tabelona["Unnamed: 0_level_2"].str.split(" ", n = 1, expand = True)
+
+    tabelona['Unnamed: 0_level_2'] = quebrando_material[0]
 
     for i in range(len(tabelona)):
         if len(tabelona['Saldo'][i]) > 6 :
             tabelona['Saldo'][i] = tabelona['Saldo'][i].replace(',','')
             tabelona['Saldo'][i] = tabelona['Saldo'][i].replace('.','')
-
-    tabelona = tabelona[:2]
 
     try:
         for j in range(len(tabelona)):
@@ -742,24 +745,15 @@ def consulta_saldo(nav):
 
     tabelona['Saldo'] = tabelona['Saldo'].astype(float)
 
-    for i in range(len(base_filtrada)):
-        if len(base_filtrada['PESO BARRAS'][i]) > 1:
-            base_filtrada['PESO BARRAS'][i] = base_filtrada['PESO BARRAS'][i].replace(',','')
-            base_filtrada['PESO BARRAS'][i] = base_filtrada['PESO BARRAS'][i].replace('.','')
-
-    for j in range(len(base_filtrada)):
-        base_filtrada['PESO BARRAS'][j] = float(base_filtrada['PESO BARRAS'][j]) / 10
-
-    tabelona = tabelona.rename(columns={'Código':'MATERIAL'})
-
+    tabelona = tabelona.rename(columns={'Unnamed: 0_level_2':'MATERIAL'})
 
     df_final = pd.merge(tabelona,base_filtrada,on='MATERIAL')
+    
     df_final['comparar'] = df_final['Saldo'] > df_final['PESO BARRAS'] 
 
     df_final = df_final.loc[df_final['comparar'] == True]
 
     return(df_final)
-
 
 nav = acessar_innovaro()
 
@@ -769,11 +763,13 @@ login(nav)
 
 menu_innovaro(nav)
 
-wks1, base, base_filtrada  = planilha_serra_transf(filename)
-
 df_final = consulta_saldo(nav)
 
+time.sleep(1)
 
+nav.quit()
+
+time.sleep(1)
 
 ########### LOOP TRANSFERÊNCIA ###########
 
@@ -787,40 +783,39 @@ menu_innovaro(nav)
 
 menu_transf(nav)
 
-wks1, base, base_filtrada, pessoa  = planilha_serra_transf(filename)
+wks1, base, base_filtrada = planilha_serra_transf(filename)
 
 c = 3
 
 i = 0
 
-for i in range(len(base)+1): # serra
+if not len(base_filtrada == 0):
 
-    print("i: ", i)
-    try:
-        peca = base_filtrada['MATERIAL'][i]
-        qtde = str(base_filtrada['PESO BARRAS'][i])
-        data = base_filtrada['DATA'][i]
-        c = preenchendo_serra_transf(data,pessoa,peca,qtde,wks1,c,i)
-        print("c: ", c)
-    except:
-        pass
+    for i in range(len(base)+1): # serra
+
+        print("i: ", i)
+        try:
+            peca = df_final['MATERIAL'][i]
+            qtde = str(df_final['PESO BARRAS'][i])
+            data = df_final['DATA'][i]
+            c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)
+            print("c: ", c)
+        except:
+            pass
     
-selecionar_todos(nav)
+    selecionar_todos(nav)
 
 nav.quit()
-
-
-
-
-
-
-
 
 ########### LOOP APONTAMENTOS ###########
 
 nav = acessar_innovaro()
 
+time.sleep(2)
+
 login(nav)
+
+time.sleep(2)
 
 menu_innovaro(nav)
 
@@ -840,18 +835,20 @@ c = 3
 
 i = 0
 
-for i in range(len(base)+5): # serra
+if not len(base_filtrada == 0):
 
-    print("i: ", i)
-    try:
-        peca = base_filtrada['CÓDIGO'][i]
-        qtde = str(base_filtrada['QNT'][i])
-        data = base_filtrada['DATA'][i]
-        pessoa = pessoa
-        c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
-        print("c: ", c)
-    except:
-        pass
+    for i in range(len(base)+5): # serra
+
+        print("i: ", i)
+        try:
+            peca = base_filtrada['CÓDIGO'][i]
+            qtde = str(base_filtrada['QNT'][i])
+            data = base_filtrada['DATA'][i]
+            pessoa = pessoa
+            c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
+            print("c: ", c)
+        except:
+            pass
 
 print('indo para usinagem')
 
@@ -869,17 +866,19 @@ c = 3
 
 i = 0
 
-for i in range(len(base)+5):# usinagem
-    
-    print("i: ", i)
-    try:
-        peca = base_filtrada['CÓDIGO'][i]
-        qtde = str(base_filtrada['QNT'][i])
-        data = base_filtrada['DATA'][i]
-        pessoa = pessoa
-        c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
-        print("c: ", c)
-    except:
-        pass
+if not len(base_filtrada == 0):
+
+    for i in range(len(base)+5):# usinagem
+        
+        print("i: ", i)
+        try:
+            peca = base_filtrada['CÓDIGO'][i]
+            qtde = str(base_filtrada['QNT'][i])
+            data = base_filtrada['DATA'][i]
+            pessoa = pessoa
+            c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
+            print("c: ", c)
+        except:
+            pass
 
 nav.quit()
