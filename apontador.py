@@ -341,8 +341,6 @@ def planilha_estamparia(filename):
 
     return(wks1, base, base_filtrada, pessoa)
 
-
-
 ########### PREENCHIMENTO TRASNFERÊNCIA DE MP ###########
 
 def preenchendo_serra_transf(data, peca, qtde, wks1, c, i):
