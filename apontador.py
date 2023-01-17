@@ -1041,7 +1041,14 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[7]/div/input"))).send_keys(Keys.TAB)
 
     #pessoa
-    if c == 3 or c == 11:
+    if c == 3:
+    
+        time.sleep(1)
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(pessoa)
+        time.sleep(1)
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(Keys.TAB)
+
+    if c == 15:
     
         time.sleep(1)
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(pessoa)
@@ -1050,6 +1057,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
 
     else:
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(Keys.TAB)
+
 
     #peça
     time.sleep(1)
@@ -1383,7 +1391,9 @@ while w < 3:
         data = datas[d]
 
         ########## CONSULTAR SALDO ###########
-
+        
+        time.sleep(2)
+        
         menu_innovaro(nav)
 
         time.sleep(1)
