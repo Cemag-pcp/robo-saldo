@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import time
-from datetime import datetime
+from datetime import datetime,timedelta 
 import numpy as np
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,6 +11,20 @@ import gspread
 from selenium.webdriver.common.action_chains import ActionChains
 
 filename = "service_account.json"
+
+def data_ontem():
+    data_ontem = datetime.now() - timedelta(1)
+    ts = pd.Timestamp(data_ontem)
+    data_ontem = data_ontem.strftime('%d/%m/%Y')
+
+    return(data_ontem)
+
+def data_hoje():
+    data_hoje = datetime.now()
+    ts = pd.Timestamp(data_hoje)
+    data_hoje = data_hoje.strftime('%d/%m/%Y')
+
+    return(data_hoje)
 
 def acessar_innovaro():
     #link1 = "http://192.168.3.141/"
@@ -80,14 +94,9 @@ def menu_transf(nav):
 
 ########### ACESSANDO PLANILHAS DE TRANSFERÊNCIA ###########
 
-def planilha_serra_transf(filename):
+def planilha_serra_transf(data, filename):
 
     #SERRA#
-
-    #data de hoje
-    data_realizado = datetime.now()
-    ts = pd.Timestamp(data_realizado)
-    data_realizado = data_realizado.strftime('%d/%m/%Y')
 
     sheet = 'RQ PC-001-000 (APONTAMENTO SERRA)'
     worksheet1 = 'USO DO PCP'
@@ -116,10 +125,10 @@ def planilha_serra_transf(filename):
     base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
 
     #filtrando data de hoje
-    base_filtrada = base.loc[base.DATA == data_realizado]
+    base_filtrada = base_filtrada.loc[base_filtrada.DATA == data]
 
     #filtrando por mat prima que não foi transferida
-    base_filtrada = base_filtrada.loc[base.PEÇA == '']
+    base_filtrada  = base_filtrada[base_filtrada['PEÇA'].isnull()]
 
     #filtrando data de hoje
     #base_filtrada = base_filtrada.loc[base_filtrada.TRANSFERÊNCIA == '']
@@ -152,14 +161,9 @@ def planilha_serra_transf(filename):
 
 ########### ACESSANDO PLANILHAS DE APONTAMENTO ###########
 
-def planilha_serra(filename):
+def planilha_serra(data, filename):
 
     #SERRA#
-
-    #data de hoje
-    data_realizado = datetime.now()
-    ts = pd.Timestamp(data_realizado)
-    data_realizado = data_realizado.strftime('%d/%m/%Y')
 
     sheet = 'RQ PC-001-000 (APONTAMENTO SERRA)'
     worksheet1 = 'USO DO PCP'
@@ -191,7 +195,7 @@ def planilha_serra(filename):
     base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
 
     #filtrando data de hoje
-    base_filtrada = base.loc[base.DATA == data_realizado]
+    base_filtrada = base.loc[base.DATA == data]
 
     #filtrando peças que faltam apontar
     base_filtrada = base_filtrada.loc[base.TRANSFERÊNCIA == '']
@@ -216,14 +220,9 @@ def planilha_serra(filename):
 
     return(wks1, base, base_filtrada, pessoa)
 
-def planilha_usinagem(filename):
+def planilha_usinagem(data, filename):
 
     #USINAGEM#
-
-    #data de hoje
-    data_realizado = datetime.now()
-    ts = pd.Timestamp(data_realizado)
-    data_realizado = data_realizado.strftime('%d/%m/%Y')
 
     sheet = 'RQ PC-001-000 (APONTAMENTO SERRA)'
     worksheet1 = 'USINAGEM 2022'
@@ -256,7 +255,7 @@ def planilha_usinagem(filename):
     #base_filtrada  = base[base['PCP'].isnull()]
 
     #filtrando data de hoje
-    base_filtrada = base.loc[base.DATA == data_realizado]
+    base_filtrada = base.loc[base.DATA == data]
 
     #filtrando linhas sem observação
     base_filtrada = base_filtrada[base_filtrada['OBSERVAÇÃO'].isnull()]
@@ -280,14 +279,9 @@ def planilha_usinagem(filename):
 
     return(wks1, base, base_filtrada, pessoa)
 
-def planilha_corte(filename):
+def planilha_corte(data, filename):
 
     #CORTE#
-
-    #data de hoje
-    data_realizado = datetime.now()
-    ts = pd.Timestamp(data_realizado)
-    data_realizado = data_realizado.strftime('%d/%m/%Y')
 
     sheet = 'Banco de dados OP'
     worksheet1 = 'Finalizadas'
@@ -311,7 +305,7 @@ def planilha_corte(filename):
     #base_filtrada  = base[base['PCP'].isnull()]
 
     #filtrando data de hoje
-    base_filtrada = base.loc[base['Data finalização'] == data_realizado]
+    base_filtrada = base.loc[base['Data finalização'] == data]
 
     #filtrando linhas que foram transferidas
     base_filtrada = base_filtrada.loc[base_filtrada['Transf. chapa'] != '']
@@ -328,14 +322,9 @@ def planilha_corte(filename):
 
     return(wks1, base, base_filtrada, pessoa)
 
-def planilha_estamparia(filename):
+def planilha_estamparia(data, filename):
 
     #ESTAMPARIA#
-
-    #data de hoje
-    data_realizado = datetime.now()
-    ts = pd.Timestamp(data_realizado)
-    data_realizado = data_realizado.strftime('%d/%m/%Y')
 
     sheet = 'RQ PC-003-000 (APONTAMENTO ESTAMPARIA)'
     worksheet1 = 'FICHA DE APONTAMENTO'
@@ -356,7 +345,7 @@ def planilha_estamparia(filename):
     ########### Tratando planilhas ###########
 
     #filtrando data de hoje
-    base_filtrada = base.loc[base.DATA == data_realizado]
+    base_filtrada = base.loc[base.DATA == data]
 
     #filtrando linhas que não tem status de ok
     base_filtrada = base_filtrada.loc[base_filtrada.STATUS == '']
@@ -378,14 +367,9 @@ def planilha_estamparia(filename):
 
     return(wks1, base, base_filtrada)
 
-def planilha_montagem(filename):
+def planilha_montagem(data, filename):
 
     #MONTAGEM#
-
-    #data de hoje
-    data_realizado = datetime.now()
-    ts = pd.Timestamp(data_realizado)
-    data_realizado = data_realizado.strftime('%d/%m/%Y')
 
     sheet = 'RQ PC-004-000 APONTAMENTO MONTAGEM M22'
     worksheet1 = 'APONTAMENTO'
@@ -409,7 +393,7 @@ def planilha_montagem(filename):
     base['CONJUNTO'] = base['CONJUNTO'].str[:6]
     base['FUNCIONÁRIO'] = base['FUNCIONÁRIO'].str[:4]
 
-    base_filtrada = base.loc[base.CARIMBO == data_realizado]
+    base_filtrada = base.loc[base.CARIMBO == data]
 
     #filtrando linhas que não tem status de ok
     base_filtrada = base_filtrada[base_filtrada['STATUS'].isnull()]
@@ -1195,7 +1179,7 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
 
 ########### CONSULTAR SALDO ###########
 
-def consulta_saldo(nav):
+def consulta_saldo(data, nav):
     
     #abrindo estoque
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[4]/span[2]'))).click()
@@ -1222,7 +1206,7 @@ def consulta_saldo(nav):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.DELETE)
     time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('h')
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(data)
     time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.TAB)
     time.sleep(1)
@@ -1231,7 +1215,7 @@ def consulta_saldo(nav):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.DELETE)
 
-    wks1, base, base_filtrada, transferidas = planilha_serra_transf(filename)
+    wks1, base, base_filtrada, transferidas = planilha_serra_transf(data, filename)
 
     if len(base_filtrada)>0:
 
@@ -1256,8 +1240,8 @@ def consulta_saldo(nav):
         except:
             pass
 
-        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]/span[2]/p'))).click()
         time.sleep(2)
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]/span[2]/p'))).click()
         try:
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]/span[2]/p'))).click()
         except:
@@ -1283,7 +1267,7 @@ def consulta_saldo(nav):
         if qtde_itens == 1:
             tabelona = tabelona[:1]
         else:
-            tabelona = tabelona[:2]
+            tabelona = tabelona[:len(tabelona)-2]
 
         #quebrando_material = tabelona["Unnamed: 0_level_2"].str.split(" ", n = 1, expand = True)
 
@@ -1322,245 +1306,245 @@ def consulta_saldo(nav):
 
 w = 0
 
+datas = [data_ontem(), data_hoje()]
+
 while w < 3:
 
-    ########## CONSULTAR SALDO ###########
+    for d in range(len(datas)):
 
-    nav = acessar_innovaro()
+        data = datas[d]
 
-    time.sleep(4)
+        ########## CONSULTAR SALDO ###########
 
-    login(nav)
+        nav = acessar_innovaro()
 
-    menu_innovaro(nav)
+        time.sleep(4)
 
-    df_final = consulta_saldo(nav)
+        login(nav)
 
-    if df_final == 0:
-        time.sleep(1)
-        nav.quit()
-    
-    else:
-        time.sleep(1)
+        menu_innovaro(nav)
+
+        df_final = consulta_saldo(data, nav)
+
         nav.quit()
 
-    time.sleep(1)
+        time.sleep(1)
 
-    ########## LOOP TRANSFERÊNCIA ###########
+        ########## LOOP TRANSFERÊNCIA ###########
 
-    nav = acessar_innovaro()
+        nav = acessar_innovaro()
 
-    time.sleep(2)
+        time.sleep(2)
 
-    login(nav)
+        login(nav)
 
-    menu_innovaro(nav)
+        menu_innovaro(nav)
 
-    menu_transf(nav)
+        menu_transf(nav)
 
-    wks1, base, base_filtrada, transferidas = planilha_serra_transf(filename)
-    
-    transferidas = transferidas.reset_index()
-
-    c = 3
-
-    i = 0
-
-    if not len(transferidas) == 0:
-
-        for i in range(len(base)+1): # serra
-
-            print("i: ", i)
-            try:
-                peca = df_final['MATERIAL'][i]
-                qtde = str(df_final['PESO BARRAS'][i])
-                data = df_final['DATA'][i]
-                c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)            
-                print("c: ", c)
-                j = 0
-
-                for j in range(len(transferidas)):
-                    try:
-                        filtrado = transferidas.loc[transferidas.MATERIAL == peca]
-                        ok = filtrado['index'][j]
-                        wks1.update("R" + str(ok+1), 'OK TRANSF')
-                    except:
-                        pass
-            except:
-                pass
+        wks1, base, base_filtrada, transferidas = planilha_serra_transf(data, filename)
         
-        #selecionar_todos(nav)
+        transferidas = transferidas.reset_index()
 
-    nav.quit()
+        c = 3
 
-    ########### LOOP APONTAMENTOS ###########
+        i = 0
 
-    nav = acessar_innovaro()
+        if not len(transferidas) == 0:
 
-    time.sleep(2)
+            for i in range(len(base)+1): # serra
 
-    login(nav)
+                print("i: ", i)
+                try:
+                    peca = df_final['MATERIAL'][i]
+                    qtde = str(df_final['PESO BARRAS'][i])
+                    data = df_final['DATA'][i]
+                    c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)            
+                    print("c: ", c)
+                    j = 0
 
-    time.sleep(2)
-
-    menu_innovaro(nav)
-
-    menu_apontamento(nav)
-
-    print('indo para serra')
-
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(3)
-
-    wks1, base, base_filtrada, pessoa  = planilha_serra(filename)
-
-    c = 3
-
-    i = 0
-
-    if not len(base_filtrada) == 0:
-
-        for i in range(len(base)+5): # serra
-
-            print("i: ", i)
-            try:
-                peca = base_filtrada['CÓDIGO'][i]
-                qtde = str(base_filtrada['QNT'][i])
-                data = base_filtrada['DATA'][i]
-                pessoa = pessoa
-                c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
-                print("c: ", c)
-            except:
-                pass
-
-    print('indo para usinagem')
-
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(3)
-
-    wks1, base, base_filtrada, pessoa  = planilha_usinagem(filename)
-
-    c = 3
-
-    i = 0
-
-    if not len(base_filtrada) == 0:
-
-        for i in range(len(base)+5):# usinagem
+                    for j in range(len(transferidas)):
+                        try:
+                            filtrado = transferidas.loc[transferidas.MATERIAL == peca]
+                            ok = filtrado['index'][j]
+                            wks1.update("R" + str(ok+1), 'OK TRANSF')
+                        except:
+                            pass
+                except:
+                    pass
             
-            print("i: ", i)
-            try:
-                peca = base_filtrada['CÓDIGO'][i]
-                qtde = str(base_filtrada['QNT'][i])
-                data = base_filtrada['DATA'][i]
-                pessoa = pessoa
-                c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
-                print("c: ", c)
-            except:
-                pass
+            selecionar_todos(nav)
 
-    print('indo para corte')
+        nav.quit()
 
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(3)
+        ########### LOOP APONTAMENTOS ###########
 
-    wks1, base, base_filtrada, pessoa  = planilha_corte(filename)
+        nav = acessar_innovaro()
 
-    c = 3
+        time.sleep(2)
 
-    i = 0
+        login(nav)
 
-    if not len(base_filtrada) == 0:
+        time.sleep(2)
 
-        for i in range(len(base)+5):
-            
-            print("i: ", i)
-            try:
-                peca = base_filtrada['Peça'][i]
-                qtde = str(base_filtrada['Total Prod.'][i])
-                data = base_filtrada['Data finalização'][i]
-                mortas = base_filtrada['Mortas'][i]
-                pessoa = pessoa
-                c = preenchendo_corte(data,pessoa,peca,qtde,wks1,c,i, mortas)
-                print("c: ", c)
-            except:
-                pass
+        menu_innovaro(nav)
 
-    print('indo para estamparia')
+        menu_apontamento(nav)
 
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(3)
+        print('indo para serra')
 
-    wks1, base, base_filtrada  = planilha_estamparia(filename)
+        nav.switch_to.default_content()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+        time.sleep(3)
 
-    c = 3
+        wks1, base, base_filtrada, pessoa  = planilha_serra(data, filename)
 
-    i = 0
+        c = 3
 
-    if not len(base_filtrada) == 0:
+        i = 0
 
-        for i in range(len(base)+5):
-            
-            print("i: ", i)
-            try:
-                peca = base_filtrada['CÓDIGO'][i]
-                qtde = str(base_filtrada['QTD'][i])
-                data = base_filtrada['DATA'][i]
-                pessoa = base_filtrada['MATRÍCULA'][i]
-                c = preenchendo_estamparia(data,pessoa,peca,qtde,wks1,c,i)
-                print("c: ", c)
-            except:
-                pass
+        if not len(base_filtrada) == 0:
 
-    print('indo para montagem')
+            for i in range(len(base)+5): # serra
 
-    nav.switch_to.default_content()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-    time.sleep(3)
+                print("i: ", i)
+                try:
+                    peca = base_filtrada['CÓDIGO'][i]
+                    qtde = str(base_filtrada['QNT'][i])
+                    data = base_filtrada['DATA'][i]
+                    pessoa = pessoa
+                    c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
+                    print("c: ", c)
+                except:
+                    pass
 
-    wks1, base, base_filtrada = planilha_montagem(filename)
+        print('indo para usinagem')
 
-    c = 3
+        nav.switch_to.default_content()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+        time.sleep(3)
 
-    i = 0
+        wks1, base, base_filtrada, pessoa  = planilha_usinagem(data, filename)
 
-    if not len(base_filtrada) == 0:
+        c = 3
 
-        for i in range(len(base)+5):
-            
-            print("i: ", i)
-            try:
-                peca = base_filtrada['CONJUNTO'][i]
-                qtde = str(base_filtrada['QUANTIDADE'][i])
-                data = base_filtrada['CARIMBO'][i]
-                pessoa = base_filtrada['FUNCIONÁRIO'][i]
-                c = preenchendo_montagem(data,pessoa,peca,qtde,wks1,c,i)
-                print("c: ", c)
-            except:
-                pass
+        i = 0
 
-    nav.quit()
+        if not len(base_filtrada) == 0:
+
+            for i in range(len(base)+5):# usinagem
+                
+                print("i: ", i)
+                try:
+                    peca = base_filtrada['CÓDIGO'][i]
+                    qtde = str(base_filtrada['QNT'][i])
+                    data = base_filtrada['DATA'][i]
+                    pessoa = pessoa
+                    c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
+                    print("c: ", c)
+                except:
+                    pass
+
+        print('indo para corte')
+
+        nav.switch_to.default_content()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+        time.sleep(3)
+
+        wks1, base, base_filtrada, pessoa  = planilha_corte(data, filename)
+
+        c = 3
+
+        i = 0
+
+        if not len(base_filtrada) == 0:
+
+            for i in range(len(base)+5):
+                
+                print("i: ", i)
+                try:
+                    peca = base_filtrada['Peça'][i]
+                    qtde = str(base_filtrada['Total Prod.'][i])
+                    data = base_filtrada['Data finalização'][i]
+                    mortas = base_filtrada['Mortas'][i]
+                    pessoa = pessoa
+                    c = preenchendo_corte(data,pessoa,peca,qtde,wks1,c,i, mortas)
+                    print("c: ", c)
+                except:
+                    pass
+
+        print('indo para estamparia')
+
+        nav.switch_to.default_content()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+        time.sleep(3)
+
+        wks1, base, base_filtrada  = planilha_estamparia(data, filename)
+
+        c = 3
+
+        i = 0
+
+        if not len(base_filtrada) == 0:
+
+            for i in range(len(base)+5):
+                
+                print("i: ", i)
+                try:
+                    peca = base_filtrada['CÓDIGO'][i]
+                    qtde = str(base_filtrada['QTD'][i])
+                    data = base_filtrada['DATA'][i]
+                    pessoa = base_filtrada['MATRÍCULA'][i]
+                    c = preenchendo_estamparia(data,pessoa,peca,qtde,wks1,c,i)
+                    print("c: ", c)
+                except:
+                    pass
+
+        print('indo para montagem')
+
+        nav.switch_to.default_content()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[14]/span[2]'))).click()
+        time.sleep(3)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+        time.sleep(3)
+
+        wks1, base, base_filtrada = planilha_montagem(data, filename)
+
+        c = 3
+
+        i = 0
+
+        if not len(base_filtrada) == 0:
+
+            for i in range(len(base)+5):
+                
+                print("i: ", i)
+                try:
+                    peca = base_filtrada['CONJUNTO'][i]
+                    qtde = str(base_filtrada['QUANTIDADE'][i])
+                    data = base_filtrada['CARIMBO'][i]
+                    pessoa = base_filtrada['FUNCIONÁRIO'][i]
+                    c = preenchendo_montagem(data,pessoa,peca,qtde,wks1,c,i)
+                    print("c: ", c)
+                except:
+                    pass
+
+        nav.quit()
