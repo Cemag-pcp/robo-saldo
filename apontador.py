@@ -137,11 +137,11 @@ def fechar_menu_apont(nav):
     menu_innovaro(nav)
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[35]/span[1]"))).click()
-    
+    time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[30]/span[1]"))).click()
-
+    time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[2]/table/tbody/tr/td[1]/div/table/tbody/tr/td[2]"))).click()
-
+    time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div"))).click()
 
 ########### ACESSANDO PLANILHAS DE TRANSFERÊNCIA ###########
@@ -1057,7 +1057,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.TAB)
 
     #processo
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S Est')
     time.sleep(1)
     WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
 
@@ -1368,7 +1368,7 @@ def consulta_saldo(data, nav):
 
 w = 0
 
-datas = [data_hoje()]
+datas = [data_ontem(), data_hoje()]
 
 nav = acessar_innovaro()
 
@@ -1601,5 +1601,5 @@ while w < 3:
                 except:
                     pass
 
-    time.sleep(2)
-    fechar_menu_apont(nav)
+        time.sleep(2)
+        fechar_menu_apont(nav)
