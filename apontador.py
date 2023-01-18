@@ -688,8 +688,8 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         # volta p janela principal (fora do iframe)
 
         nav.switch_to.default_content()
-        texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+        WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         wks1.update('R' + str(i+1), texto_erro)
 
         try:
@@ -824,8 +824,8 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
         # volta p janela principal (fora do iframe)
 
         nav.switch_to.default_content()
-        texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+        WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         wks1.update('J' + str(i+1), texto_erro)
 
         time.sleep(2)
@@ -1017,8 +1017,8 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('L' + str(i+1), texto_erro)
 
                 time.sleep(2)
@@ -1157,8 +1157,8 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         # volta p janela principal (fora do iframe)
 
         nav.switch_to.default_content()
-        texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+        WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         wks1.update('J' + str(i+1), texto_erro)
 
         time.sleep(2)
@@ -1284,8 +1284,8 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
         # volta p janela principal (fora do iframe)
 
         nav.switch_to.default_content()
-        texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+        WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         wks1.update('I' + str(i+1), texto_erro)
 
         time.sleep(2)
