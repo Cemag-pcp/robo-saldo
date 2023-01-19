@@ -183,7 +183,6 @@ def planilha_serra_transf(data, filename):
         if base['DATA'][i] == "":
             base['DATA'][i] = base['DATA'][i-1]
 
-
     #filtrando peças que não foram apontadas
     base_filtrada  = base[base['TRANSFERÊNCIA'].isnull()]
 
@@ -223,7 +222,6 @@ def planilha_serra_transf(data, filename):
         base_filtrada = base_filtrada.groupby(['DATA','MATERIAL']).sum().reset_index()
 
     base_filtrada = base_filtrada.loc[base_filtrada['PESO BARRAS'] > 0].reset_index(drop=True)
-    
 
     return(wks1, base, base_filtrada, transferidas)
 
@@ -701,7 +699,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('R' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
+        wks1.update('S' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
         try:
             nav.switch_to.default_content()
@@ -1170,7 +1168,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('J' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
+        wks1.update('K' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -1297,7 +1295,7 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('I' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
+        wks1.update('J' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -1452,7 +1450,7 @@ while 'a' == 'a':
 
         w = 0
 
-        datas = [data_ontem(), data_hoje()]
+        datas = [data_hoje()]
 
         nav = acessar_innovaro()
 
@@ -1494,30 +1492,32 @@ while 'a' == 'a':
 
                 i = 0
 
-                if not len(transferidas) == 0:
+                if not len(df_final) == 0:
 
-                        for i in range(len(base)+1): # serra
-
-                            print("i: ", i)
-                            try:
-                                peca = df_final['MATERIAL'][i]
-                                qtde = str(df_final['PESO BARRAS'][i])
-                                data = df_final['DATA'][i]
-                                c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)            
-                                print("c: ", c)
-                                j = 0
-
-                                for j in range(len(transferidas)):
-                                    try:
-                                        filtrado = transferidas.loc[transferidas.MATERIAL == peca]
-                                        ok = filtrado['index'][j]
-                                        wks1.update("R" + str(ok+1), 'OK TRANSF')
-                                    except:
-                                        pass
-                            except:
-                                pass
+                    if not len(transferidas) == 0:
                         
-                        selecionar_todos(nav)
+                            for i in range(len(base)+1): # serra
+
+                                print("i: ", i)
+                                try:
+                                    peca = df_final['MATERIAL'][i]
+                                    qtde = str(df_final['PESO BARRAS'][i])
+                                    data = df_final['DATA'][i]
+                                    c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)            
+                                    print("c: ", c)
+                                    j = 0
+
+                                    for j in range(len(transferidas)):
+                                        try:
+                                            filtrado = transferidas.loc[transferidas.MATERIAL == peca]
+                                            ok = filtrado['index'][j]
+                                            wks1.update("R" + str(ok+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
+                                        except:
+                                            pass
+                                except:
+                                    pass
+                            
+                            selecionar_todos(nav)
 
                 fechar_menu_transf(nav)
 
