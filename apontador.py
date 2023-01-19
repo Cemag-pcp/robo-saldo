@@ -8,7 +8,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import gspread
-from selenium.webdriver.common.action_chains import ActionChains
 
 filename = "service_account.json"
 
@@ -23,8 +22,15 @@ def data_hoje():
     data_hoje = datetime.now()
     ts = pd.Timestamp(data_hoje)
     data_hoje = data_hoje.strftime('%d/%m/%Y')
-
+    
     return(data_hoje)
+
+def hora_atual():
+    hora_atual = datetime.now()
+    ts = pd.Timestamp(hora_atual)
+    hora_atual = hora_atual.strftime('%H:%M:%S')
+    
+    return(hora_atual)
 
 def acessar_innovaro():
     
@@ -192,6 +198,8 @@ def planilha_serra_transf(data, filename):
 
     base_filtrada =  base_filtrada[['DATA','MATERIAL','PESO BARRAS']]
 
+    base_filtrada = base_filtrada[base_filtrada['MATERIAL'].notnull()]
+
     transferidas = base_filtrada
 
     if len(base_filtrada) > 0:
@@ -213,6 +221,9 @@ def planilha_serra_transf(data, filename):
             base_filtrada['PESO BARRAS'][j] = float(base_filtrada['PESO BARRAS'][j]) / 10
 
         base_filtrada = base_filtrada.groupby(['DATA','MATERIAL']).sum().reset_index()
+
+    base_filtrada = base_filtrada.loc[base_filtrada['PESO BARRAS'] > 0].reset_index(drop=True)
+    
 
     return(wks1, base, base_filtrada, transferidas)
 
@@ -690,7 +701,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('R' + str(i+1), texto_erro)
+        wks1.update('R' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
         try:
             nav.switch_to.default_content()
@@ -708,7 +719,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
         c = 3
 
     except:
-        wks1.update('Q' + str(i+1), 'OK ROBINHO')
+        wks1.update('Q' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
         print('deu bom')
         c = c + 2
 
@@ -826,7 +837,7 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('J' + str(i+1), texto_erro)
+        wks1.update('J' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -839,7 +850,7 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
         c = 3
 
     except:
-        wks1.update('I' + str(i+1), 'OK ROBINHO!')
+        wks1.update('I' + str(i+1), 'OK ROBINHO - ' + ' ' + data_hoje() + ' ' + hora_atual())
         print('deu bom')
         c = c + 2
 
@@ -1019,7 +1030,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 nav.switch_to.default_content()
                 texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-                wks1.update('L' + str(i+1), texto_erro)
+                wks1.update('L' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -1032,7 +1043,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 c = 3
 
             except:
-                wks1.update('L' + str(i+1), 'OK ROBINHO')
+                wks1.update('L' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
                 print('deu bom')
                 c = c + 2
 
@@ -1159,7 +1170,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('J' + str(i+1), texto_erro)
+        wks1.update('J' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -1172,7 +1183,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         c = 3
 
     except:
-        wks1.update('J' + str(i+1), 'OK ROBINHO')
+        wks1.update('J' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
         print('deu bom')
         c = c + 2
 
@@ -1286,7 +1297,7 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
         nav.switch_to.default_content()
         texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
         WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        wks1.update('I' + str(i+1), texto_erro)
+        wks1.update('I' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
         time.sleep(2)
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -1299,7 +1310,7 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
         c = 3
 
     except:
-        wks1.update('I' + str(i+1), 'OK ROBINHO')
+        wks1.update('I' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
         print('deu bom')
         c = c + 2
 
