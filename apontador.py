@@ -537,6 +537,60 @@ def planilha_montagem(data, filename):
 
     return(wks1, base, base_filtrada)
 
+def planilha_sucata(data, filename):
+
+    #SUCATA#
+
+    sheet = 'Banco de dados OP'
+    worksheet1 = 'Finalizadas'
+
+    sa = gspread.service_account(filename)
+    sh = sa.open(sheet)
+
+    wks1 = sh.worksheet(worksheet1)
+
+    base = wks1.get()
+    base = pd.DataFrame(base)
+    #base = base.iloc
+
+    headers = wks1.row_values(5)#[0:3]
+
+    base = base.set_axis(headers, axis=1, inplace=False)[5:]
+
+    ########### Tratando planilhas ###########
+
+    #filtrando peças que não foram apontadas
+    #base_filtrada  = base[base['PCP'].isnull()]
+
+    #filtrando data de hoje
+    base_filtrada = base.loc[base['Data finalização'] == data]
+
+    #filtrando linhas que foram transferidas
+    base_filtrada = base_filtrada.loc[base_filtrada['Transf. chapa'] != '']
+
+    #filtrando linhas que foram transferidas
+    base_filtrada = base_filtrada.loc[base_filtrada['Apont. peças'] == '']
+
+    #filtrando linhas que tem código de chapa
+    base_filtrada = base_filtrada[base_filtrada['Código Chapa'].notnull()]
+    base_filtrada = base_filtrada[base_filtrada['Código Chapa'] != '']
+
+    #extraindo código
+    base_filtrada["Peça"] = base_filtrada["Peça"].str[:6]
+
+    for i in range(len(base)):
+        try:
+            if len(base_filtrada['Peça'][i]) == 5:
+                base_filtrada['Peça'][i] = "0" + base_filtrada['Peça'][i] 
+        except:
+            pass
+
+    base_filtrada = base_filtrada[['Data finalização','Peça','Total Prod.','Mortas']]
+
+    pessoa = '4161'
+
+    return(wks1, base, base_filtrada, pessoa)
+
 ########### PREENCHIMENTO TRANSFERÊNCIA DE MP ###########
 
 def preenchendo_serra_transf(data, peca, qtde, wks1, c, i):
@@ -986,14 +1040,6 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
 
 def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
-    if c == 17:
-
-        c = 3
-    
-    else:
-
-        c = c
-    
     try:
         nav.switch_to.default_content()
     except:
@@ -1219,7 +1265,6 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         pass
 
     #data
-    
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.CONTROL + 'a')
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.DELETE)
     time.sleep(1)
@@ -1352,7 +1397,6 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
         pass
 
     #data
-    
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.CONTROL + 'a')
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.DELETE)
     time.sleep(1)
@@ -1892,39 +1936,39 @@ while 'a' == 'a':
                         except:
                             pass
 
-                # print('indo para corte')
+                print('indo para corte')
 
-                # time.sleep(2)
+                time.sleep(2)
 
-                # nav.switch_to.default_content()
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                # time.sleep(3)
+                nav.switch_to.default_content()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                time.sleep(3)
 
-                # wks1, base, base_filtrada, pessoa  = planilha_corte(data, filename)
+                wks1, base, base_filtrada, pessoa  = planilha_corte(data, filename)
 
-                # c = 3
+                c = 3
 
-                # i = 0
+                i = 0
 
-                # if not len(base_filtrada) == 0:
+                if not len(base_filtrada) == 0:
 
-                #     for i in range(len(base)+5):
+                    for i in range(len(base)+5):
                         
-                #         print("i: ", i)
-                #         try:
-                #             peca = base_filtrada['Peça'][i]
-                #             qtde = str(base_filtrada['Total Prod.'][i])
-                #             data = base_filtrada['Data finalização'][i]
-                #             mortas = base_filtrada['Mortas'][i]
-                #             pessoa = pessoa
-                #             c = preenchendo_corte(data,pessoa,peca,qtde,wks1,c,i, mortas)
-                #             print("c: ", c)
-                #         except:
-                #             pass
+                        print("i: ", i)
+                        try:
+                            peca = base_filtrada['Peça'][i]
+                            qtde = str(base_filtrada['Total Prod.'][i])
+                            data = base_filtrada['Data finalização'][i]
+                            mortas = base_filtrada['Mortas'][i]
+                            pessoa = pessoa
+                            c = preenchendo_corte(data,pessoa,peca,qtde,wks1,c,i, mortas)
+                            print("c: ", c)
+                        except:
+                            pass
 
                 print('Indo para estamparia')
 
