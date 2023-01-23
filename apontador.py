@@ -11,6 +11,26 @@ import gspread
 
 filename = "service_account.json"
 
+def dia_da_semana():
+    
+    today = datetime.now()
+    today = today.isoweekday()
+    print(today)
+
+def data_sexta():
+    data_sexta = datetime.now() - timedelta(3)
+    ts = pd.Timestamp(data_sexta)
+    data_sexta = data_sexta.strftime('%d/%m/%Y')
+
+    return(data_sexta)
+
+def data_sabado():
+    data_sabado = datetime.now() - timedelta(2)
+    ts = pd.Timestamp(data_sabado)
+    data_sabado = data_sabado.strftime('%d/%m/%Y')
+
+    return(data_sabado)
+
 def data_ontem():
     data_ontem = datetime.now() - timedelta(1)
     ts = pd.Timestamp(data_ontem)
@@ -274,10 +294,10 @@ def planilha_corte_transf(data, filename):
                     base_filtrada['Peso'][i] = base_filtrada['Peso'][i].replace(',','.')
             except:
                 pass
-            
-        base_filtrada = base_filtrada.groupby(['Data','Código Chapa']).sum().reset_index()
+        
+        base_filtrada['Peso'] = base_filtrada['Peso'].astype(float)
 
-    base_filtrada['Peso'] = base_filtrada['Peso'].astype(float) 
+        base_filtrada = base_filtrada.groupby(['Data','Código Chapa']).sum().reset_index()
 
     return(wks1, base, base_filtrada)
 
@@ -1618,7 +1638,7 @@ def consulta_saldo_chapas(data, nav):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div"))).click()
     
     try:
-        nav.switch_to.default_content()
+        #nav.switch_to.default_content()
         iframe1 = WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
         nav.switch_to.frame(iframe1)
     except:
@@ -1739,7 +1759,13 @@ while 'a' == 'a':
 
         w = 0
 
-        datas = [data_hoje()]
+        if dia_da_semana() != 1:
+
+            datas = [data_ontem(), data_hoje()]
+        
+        else:
+
+            datas = [data_sexta(), data_sabado(), data_hoje()]
 
         nav = acessar_innovaro()
 
@@ -2037,6 +2063,6 @@ while 'a' == 'a':
                 time.sleep(2)            
 
                 fechar_menu_apont(nav)
-
+    
     except:
-        pass     
+        pass
