@@ -405,8 +405,9 @@ def planilha_usinagem(data, filename):
     base_filtrada = base.loc[base.DATA == data]
 
     #filtrando linhas sem observação
-    base_filtrada = base_filtrada[base_filtrada['OBSERVAÇÃO'].isnull()]
-    base_filtrada = base_filtrada[base_filtrada['PCP'].isnull()]
+    base_filtrada = base_filtrada[base_filtrada['PCP'] == '']
+    #base_filtrada = base_filtrada[base_filtrada['OBSERVAÇÃO'].isnull()]
+    #base_filtrada = base_filtrada[base_filtrada['PCP'].isnull()]
     
     #inserindo 0 antes do código da peca
     base_filtrada['CÓDIGO'] = base_filtrada['CÓDIGO'].astype(str)
@@ -554,7 +555,7 @@ def planilha_montagem(data, filename):
     base_filtrada = base.loc[base.CARIMBO == data]
 
     #filtrando linhas que não tem status de ok
-    base_filtrada = base_filtrada[base_filtrada['STATUS'].isnull()]
+    base_filtrada = base_filtrada[base_filtrada['STATUS'] == ''] 
 
     base_filtrada = base_filtrada[['CARIMBO','FUNCIONÁRIO','CONJUNTO','QUANTIDADE']]
 
