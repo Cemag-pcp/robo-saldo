@@ -90,44 +90,42 @@ def menu_innovaro(nav):
         pass
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-
     time.sleep(2)
 
 def menu_apontamento(nav):
 
     #clicando em produção
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[30]/span[2]'))).click()
-
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[31]/span[2]'))).click()
     time.sleep(2)
 
     #clicando em SFC
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[35]/span[2]'))).click()
-
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[36]/span[2]'))).click()
     time.sleep(2)
 
     #clicando em apontamento
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
-
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
     time.sleep(3)
 
 def menu_transf(nav):
 
     #clicando em transferencia
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//html/body/div[8]/div[2]/div[23]/span[2]'))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[1]'))).click()
 
     time.sleep(2)
 
     #clicando em transf entre deposito
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[24]/span[2]'))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[25]/span[2]'))).click()
 
     time.sleep(3)
 
 def menu_transf_2(nav):
     
     #clicando em transf
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[24]/span[2]'))).click()
-    
-    time.sleep(2)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[2]'))).click()
+    time.sleep(1.5)
+
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[25]/span[2]'))).click()
+    time.sleep(1.5)
 
 def fechar_menu_consulta(nav):
 
@@ -144,7 +142,7 @@ def fechar_menu_consulta(nav):
     time.sleep(2)
 
     #fecha consulta
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[7]/span[1]"))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
 
 def fechar_menu_transf(nav):
     
@@ -160,8 +158,9 @@ def fechar_menu_transf(nav):
     menu_innovaro(nav)
 
     #fecha aba de consulta
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[23]/span[1]"))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[2]'))).click()
 
+    time.sleep(1.5)
     #fecha estoque
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[4]/span[1]"))).click()
 
@@ -176,9 +175,10 @@ def fechar_menu_apont(nav):
 
     menu_innovaro(nav)
 
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[35]/span[1]"))).click()
+    time.sleep(1.5)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[36]/span[2]'))).click()
     time.sleep(3)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[30]/span[1]"))).click()
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[31]/span[2]'))).click()
     time.sleep(4)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[2]/table/tbody/tr/td[1]/div/table/tbody/tr/td[2]"))).click()
     time.sleep(5)
@@ -229,6 +229,8 @@ def planilha_serra_transf(data, filename):
 
     base_filtrada = base_filtrada[base_filtrada['MATERIAL'].notnull()]
 
+    base_filtrada = base_filtrada[base_filtrada['PESO BARRAS'] != '']
+
     transferidas = base_filtrada
 
     if len(base_filtrada) > 0:
@@ -273,10 +275,12 @@ def planilha_corte_transf(data, filename):
     base = pd.DataFrame(base)
     base = base.set_axis(headers, axis=1, inplace=False)[2:]
 
+    base['Data'] = base['Data'].str[:10]
+
     ########### Tratando planilhas ###########
 
     #filtrando peças que não foram apontadas
-    base_filtrada  = base[base['Status'] == '']
+    base_filtrada = base[base['Status'] == '']
 
     #filtrando data de hoje
     base_filtrada = base_filtrada.loc[base_filtrada.Data == data]
@@ -344,6 +348,8 @@ def planilha_serra(data, filename):
     #filtrando data de hoje
     base_filtrada = base_filtrada.loc[base_filtrada.DATA == data]
 
+    base_filtrada = base_filtrada.fillna('')
+
     #filtrando peças que faltam apontar
     base_filtrada = base_filtrada.loc[base_filtrada.TRANSF != '']
 
@@ -404,6 +410,8 @@ def planilha_usinagem(data, filename):
     #filtrando data de hoje
     base_filtrada = base.loc[base.DATA == data]
 
+    base_filtrada = base_filtrada.fillna('')
+
     #filtrando linhas sem observação
     base_filtrada = base_filtrada[base_filtrada['PCP'] == '']
     #base_filtrada = base_filtrada[base_filtrada['OBSERVAÇÃO'].isnull()]
@@ -447,6 +455,8 @@ def planilha_corte(data, filename):
 
     base = base.set_axis(headers, axis=1, inplace=False)[5:]
 
+    base['Data finalização'] = base['Data finalização'].str[:10]
+
     ########### Tratando planilhas ###########
 
     #filtrando peças que não foram apontadas
@@ -455,6 +465,8 @@ def planilha_corte(data, filename):
     #filtrando data de hoje
     base_filtrada = base.loc[base['Data finalização'] == data]
 
+    base_filtrada = base_filtrada.fillna('')
+
     #filtrando linhas que foram transferidas
     base_filtrada = base_filtrada.loc[base_filtrada['Transf. chapa'] != '']
 
@@ -462,7 +474,6 @@ def planilha_corte(data, filename):
     base_filtrada = base_filtrada.loc[base_filtrada['Apont. peças'] == '']
 
     #filtrando linhas que tem código de chapa
-    base_filtrada = base_filtrada[base_filtrada['Código Chapa'].notnull()]
     base_filtrada = base_filtrada[base_filtrada['Código Chapa'] != '']
 
     #extraindo código
@@ -505,6 +516,8 @@ def planilha_estamparia(data, filename):
 
     #filtrando data de hoje
     base_filtrada = base.loc[base.DATA == data]
+
+    base_filtrada = base_filtrada.fillna('')
 
     #filtrando linhas que não tem status de ok
     base_filtrada = base_filtrada.loc[base_filtrada.STATUS == '']
@@ -553,6 +566,8 @@ def planilha_montagem(data, filename):
     base['FUNCIONÁRIO'] = base['FUNCIONÁRIO'].str[:4]
 
     base_filtrada = base.loc[base.CARIMBO == data]
+
+    base_filtrada = base_filtrada.fillna('')
 
     #filtrando linhas que não tem status de ok
     base_filtrada = base_filtrada[base_filtrada['STATUS'] == ''] 
@@ -640,6 +655,8 @@ def planilha_pintura(data, filename):
     #filtrando data de hoje
     base_filtrada = base.loc[base['Carimbo'] == data]
 
+    base_filtrada = base_filtrada.fillna('')
+
     #filtrando STATUS VAZIO
     base_filtrada = base_filtrada.loc[base_filtrada['STATUS'] == '']
 
@@ -710,6 +727,11 @@ def preenchendo_serra_transf(data, peca, qtde, wks1, c, i):
     #click em confirmar
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
+    try:
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
+    except:
+        pass
+
     time.sleep(2)
 
     c = c+2
@@ -730,10 +752,12 @@ def preenchendo_corte_transf(data, peca, qtde, wks1, c, i):
     
     #Insert
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
+    time.sleep(1.5)
 
     #Classe
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[4]/div/input'))).send_keys(Keys.TAB)
-    
+    time.sleep(1.5)
+
     #Solicitante
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[6]/div/input'))).send_keys(Keys.TAB)
     
@@ -741,16 +765,19 @@ def preenchendo_corte_transf(data, peca, qtde, wks1, c, i):
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[8]/div/input'))).send_keys('central')
     time.sleep(1)
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[8]/div/input'))).send_keys(Keys.TAB)
+    time.sleep(1.5)
 
     #Deposito de destino
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[10]/div/input'))).send_keys('corte')
     time.sleep(1)
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[10]/div/input'))).send_keys(Keys.TAB)
+    time.sleep(1.5)
 
     #Recurso
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[12]/div/input'))).send_keys(peca)
     time.sleep(1)
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[12]/div/input'))).send_keys(Keys.TAB)
+    time.sleep(1.5)
     
     #Lote
     WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[' + str(c) + ']/td[14]/div/input'))).send_keys(Keys.TAB)
@@ -772,7 +799,12 @@ def preenchendo_corte_transf(data, peca, qtde, wks1, c, i):
 
     #click em confirmar
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
-
+    
+    try:
+        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
+    except:
+        pass
+    
     time.sleep(2)
 
     c = c+2
@@ -919,10 +951,12 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
     #Máquina
     WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
 
+    time.sleep(3)
+
     #qtde
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
     
-    time.sleep(1)
+    time.sleep(3)
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -1055,10 +1089,12 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
     #Máquina
     WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
 
+    time.sleep(3)
+
     #qtde
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
-    
-    time.sleep(1)
+
+    time.sleep(3)
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -1223,11 +1259,11 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             
             #Máquina
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
+            time.sleep(3)
 
             #qtde
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
-            
-            time.sleep(1)
+            time.sleep(3)
 
             #branco
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
@@ -1235,6 +1271,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             if mortas != '':
 
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[19]/div/input"))).send_keys(Keys.TAB)
+                time.sleep(3)
 
                 #Mortas
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[21]/div/input"))).send_keys(mortas)
@@ -1260,7 +1297,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 nav.switch_to.default_content()
                 texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-                wks1.update('L' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
+                wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
@@ -1371,11 +1408,11 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
     
     #Máquina
     WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
+    time.sleep(3)
 
     #qtde
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
-    
-    time.sleep(1)
+    time.sleep(3)
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -1497,11 +1534,11 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
     
     #Máquina
     WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
+    time.sleep(3)
 
     #qtde
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
-    
-    time.sleep(1)
+    time.sleep(3)
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -1623,11 +1660,11 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
     
     #Máquina
     WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
+    time.sleep(3)
 
     #qtde
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
-    
-    time.sleep(1)
+    time.sleep(3)
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -1668,17 +1705,12 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
 
 def consulta_saldo(data, nav):
     
-    #abrindo estoque
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[4]/span[2]'))).click()
-    time.sleep(3)
-
-    #consultas
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[7]/span[2]"))).click()
-    time.sleep(3)
-
-    #saldo de recurso
+    time.sleep(0.5)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[4]/span[1]'))).click()
+    time.sleep(1)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
+    time.sleep(0.5)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@title='-1897148410, Saldos de recursos.il']"))).click()
-    time.sleep(3)
 
     #mudando iframe
     iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
@@ -1793,14 +1825,14 @@ def consulta_saldo(data, nav):
 
 def consulta_saldo_chapas(data, nav):
     
-    #consultas
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[7]/span[2]"))).click()
-    time.sleep(3)
-
-    #saldo de recurso
+    time.sleep(1)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[2]'))).click()
+    time.sleep(1)
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
+    time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@title='-1897148410, Saldos de recursos.il']"))).click()
-    time.sleep(3)
-
+    time.sleep(1.5)
+    
     #fechando aba anterior
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div"))).click()
     
@@ -1946,8 +1978,8 @@ while 'a' == 'a':
 
             for d in range(len(datas)):
 
-                #data = datas[d]
-                data = data_hoje()
+                data = datas[d]
+                #data = data_ontem()
 
                 ########## CONSULTAR SALDO ###########
 
@@ -2006,7 +2038,10 @@ while 'a' == 'a':
                                 except:
                                     pass
                             
-                            selecionar_todos(nav)
+                            try:
+                                selecionar_todos(nav)
+                            except:
+                                pass
 
                 ########## CONSULTAR SALDO CORTE ###########
 
@@ -2060,7 +2095,10 @@ while 'a' == 'a':
                         except:
                             pass
                     
-                    selecionar_todos(nav)
+                    try:
+                        selecionar_todos(nav)
+                    except:
+                        pass
 
                 fechar_menu_transf(nav)
 
@@ -2075,7 +2113,7 @@ while 'a' == 'a':
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
                 time.sleep(3)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
@@ -2105,7 +2143,7 @@ while 'a' == 'a':
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
                 time.sleep(3)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
@@ -2137,7 +2175,7 @@ while 'a' == 'a':
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
                 time.sleep(3)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
@@ -2169,7 +2207,7 @@ while 'a' == 'a':
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
                 time.sleep(3)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
@@ -2200,7 +2238,7 @@ while 'a' == 'a':
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
                 time.sleep(3)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
@@ -2233,7 +2271,7 @@ while 'a' == 'a':
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/div[2]/div[37]/span[2]'))).click()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
                 time.sleep(3)
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
