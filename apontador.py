@@ -1107,7 +1107,7 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S Usi')
         time.sleep(1)
         WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
-        
+        time.sleep(1)
         try:
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
             time.sleep(0.5)
@@ -1252,8 +1252,14 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
         time.sleep(0.5)
         webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
     except:
-
+        print('deu ruim')
         #processo
+        try:
+            iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+            nav.switch_to.frame(iframe1)
+        except:
+            print('deu ruim')
+
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).click()
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
         time.sleep(1)
@@ -1268,16 +1274,18 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             time.sleep(0.5)
             webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
         except:
+            print('deu ruim')
 
             try:
                 iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
                 nav.switch_to.frame(iframe1)
             except:
-                pass
-                    
+                print('deu ruim')
+                
+            time.sleep(1)
             #Etapa
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[14]/div/input"))).send_keys(Keys.TAB)
-            
+            time.sleep(1)
             #Máquina
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[16]/div/input"))).send_keys(Keys.TAB)
             time.sleep(3)
@@ -1336,7 +1344,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 c = c + 2
 
             print(c)
-    
+        
     return(c)
 
 def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
@@ -1780,9 +1788,11 @@ def consulta_saldo(data, nav):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
     time.sleep(0.5)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@title='-1897148410, Saldos de recursos.il']"))).click()
+    time.sleep(1)
 
     #mudando iframe
     iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+    time.sleep(1)
     nav.switch_to.frame(iframe1)
     
     #data base
@@ -1904,6 +1914,7 @@ def consulta_saldo_chapas(data, nav):
     
     #fechando aba anterior
     nav.switch_to.default_content()
+    time.sleep(1)
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="tabs"]/td[1]/table/tbody/tr/td[4]/span/div'))).click()
     
     try:
@@ -2048,9 +2059,10 @@ while 'a' == 'a':
 
             for d in range(len(datas)):
 
-                data = datas[d]
-                #data = data_hoje()
-
+                #data = datas[d]
+                data = data_hoje()
+                #data = '28/01/2023'
+                
                 ########## CONSULTAR SALDO ###########
 
                 print("Verificando saldo da serra")
