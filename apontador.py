@@ -1423,12 +1423,20 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.TAB)
     
     try:
-        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        nav.switch_to.default_content()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         time.sleep(0.5)
         webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
         time.sleep(0.5)
         webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
     except:
+        print("deu ruim")
+
+        try:
+            iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+            nav.switch_to.frame(iframe1)
+        except:
+            pass
 
         #processo
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S Est')
@@ -1436,12 +1444,20 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
 
         try:
-            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+            nav.switch_to.default_content()
+            WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
             time.sleep(0.5)
             webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
             time.sleep(0.5)
             webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
         except:
+            print("deu ruim")
+            
+            try:
+                iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+                nav.switch_to.frame(iframe1)
+            except:
+                pass
 
             #Etapa
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[14]/div/input"))).send_keys(Keys.TAB)
@@ -2073,8 +2089,8 @@ while 'a' == 'a':
 
             for d in range(len(datas)):
 
-                #data = datas[d]
-                data = data_hoje()
+                data = datas[d]
+                #data = data_hoje()
                 #data = '28/01/2023'
                 
                 ########## CONSULTAR SALDO ###########
@@ -2204,160 +2220,160 @@ while 'a' == 'a':
 
                 menu_apontamento(nav)
 
-                # print('Indo para serra')
+                print('Indo para serra')
 
-                # nav.switch_to.default_content()
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                nav.switch_to.default_content()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
-                # wks1, base, base_filtrada, pessoa  = planilha_serra(data, filename)
+                wks1, base, base_filtrada, pessoa  = planilha_serra(data, filename)
 
-                # c = 3
+                c = 3
 
-                # i = 0
+                i = 0
 
-                # if not len(base_filtrada) == 0:
+                if not len(base_filtrada) == 0:
 
-                #     for i in range(len(base)+5): # serra
+                    for i in range(len(base)+5): # serra
 
-                #         print("i: ", i)
-                #         try:
-                #             peca = base_filtrada['CÓDIGO'][i]
-                #             qtde = str(base_filtrada['QNT'][i])
-                #             data = base_filtrada['DATA'][i]
-                #             pessoa = pessoa
-                #             c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
-                #             print("c: ", c)
-                #         except:
-                #             pass
+                        print("i: ", i)
+                        try:
+                            peca = base_filtrada['CÓDIGO'][i]
+                            qtde = str(base_filtrada['QNT'][i])
+                            data = base_filtrada['DATA'][i]
+                            pessoa = pessoa
+                            c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i)
+                            print("c: ", c)
+                        except:
+                            pass
 
-                # print('Indo para usinagem')
+                print('Indo para usinagem')
 
-                # nav.switch_to.default_content()
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                nav.switch_to.default_content()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
-                # wks1, base, base_filtrada, pessoa  = planilha_usinagem(data, filename)
+                wks1, base, base_filtrada, pessoa  = planilha_usinagem(data, filename)
 
-                # c = 3
+                c = 3
 
-                # i = 0
+                i = 0
 
-                # if not len(base_filtrada) == 0:
+                if not len(base_filtrada) == 0:
 
-                #     for i in range(len(base)+5):# usinagem
+                    for i in range(len(base)+5):# usinagem
                         
-                #         print("i: ", i)
-                #         try:
-                #             peca = base_filtrada['CÓDIGO'][i]
-                #             qtde = str(base_filtrada['QNT'][i])
-                #             data = base_filtrada['DATA'][i]
-                #             pessoa = pessoa
-                #             c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
-                #             print("c: ", c)
-                #         except:
-                #             pass
+                        print("i: ", i)
+                        try:
+                            peca = base_filtrada['CÓDIGO'][i]
+                            qtde = str(base_filtrada['QNT'][i])
+                            data = base_filtrada['DATA'][i]
+                            pessoa = pessoa
+                            c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i)
+                            print("c: ", c)
+                        except:
+                            pass
 
-                # print('indo para corte')
+                print('indo para corte')
 
-                # time.sleep(2)
+                time.sleep(2)
 
-                # nav.switch_to.default_content()
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                nav.switch_to.default_content()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
-                # wks1, base, base_filtrada, pessoa  = planilha_corte(data, filename)
+                wks1, base, base_filtrada, pessoa  = planilha_corte(data, filename)
 
-                # c = 3
+                c = 3
 
-                # i = 0
+                i = 0
 
-                # if not len(base_filtrada) == 0:
+                if not len(base_filtrada) == 0:
 
-                #     for i in range(len(base)+5):
+                    for i in range(len(base)+5):
                         
-                #         print("i: ", i)
-                #         try:
-                #             peca = base_filtrada['Peça'][i]
-                #             qtde = str(base_filtrada['Total Prod.'][i])
-                #             data = base_filtrada['Data finalização'][i]
-                #             mortas = base_filtrada['Mortas'][i]
-                #             pessoa = pessoa
-                #             c = preenchendo_corte(data,pessoa,peca,qtde,wks1,c,i, mortas)
-                #             print("c: ", c)
-                #         except:
-                #             pass
+                        print("i: ", i)
+                        try:
+                            peca = base_filtrada['Peça'][i]
+                            qtde = str(base_filtrada['Total Prod.'][i])
+                            data = base_filtrada['Data finalização'][i]
+                            mortas = base_filtrada['Mortas'][i]
+                            pessoa = pessoa
+                            c = preenchendo_corte(data,pessoa,peca,qtde,wks1,c,i, mortas)
+                            print("c: ", c)
+                        except:
+                            pass
 
-                # print('Indo para estamparia')
+                print('Indo para estamparia')
 
-                # time.sleep(2)
-                # nav.switch_to.default_content()
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                time.sleep(2)
+                nav.switch_to.default_content()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
-                # wks1, base, base_filtrada  = planilha_estamparia(data, filename)
+                wks1, base, base_filtrada  = planilha_estamparia(data, filename)
 
-                # c = 3
+                c = 3
 
-                # i = 0
+                i = 0
 
-                # if not len(base_filtrada) == 0:
+                if not len(base_filtrada) == 0:
 
-                #     for i in range(len(base)+5):
+                    for i in range(len(base)+5):
                         
-                #         print("i: ", i)
-                #         try:
-                #             peca = base_filtrada['CÓDIGO'][i]
-                #             qtde = str(base_filtrada['QTD'][i])
-                #             data = base_filtrada['DATA'][i]
-                #             pessoa = base_filtrada['MATRÍCULA'][i]
-                #             c = preenchendo_estamparia(data,pessoa,peca,qtde,wks1,c,i)
-                #             print("c: ", c)
-                #         except:
-                #             pass
+                        print("i: ", i)
+                        try:
+                            peca = base_filtrada['CÓDIGO'][i]
+                            qtde = str(base_filtrada['QTD'][i])
+                            data = base_filtrada['DATA'][i]
+                            pessoa = base_filtrada['MATRÍCULA'][i]
+                            c = preenchendo_estamparia(data,pessoa,peca,qtde,wks1,c,i)
+                            print("c: ", c)
+                        except:
+                            pass
 
-                # print('indo para montagem')
+                print('indo para montagem')
 
-                # time.sleep(2)
-                # nav.switch_to.default_content()
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
-                # time.sleep(3)
-                # WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                time.sleep(2)
+                nav.switch_to.default_content()
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[38]/span[2]'))).click()
+                time.sleep(3)
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
-                # wks1, base, base_filtrada = planilha_montagem(data, filename)
+                wks1, base, base_filtrada = planilha_montagem(data, filename)
 
-                # c = 3
+                c = 3
 
-                # i = 0
+                i = 0
 
-                # if not len(base_filtrada) == 0:
+                if not len(base_filtrada) == 0:
 
-                #     for i in range(len(base)+5):
+                    for i in range(len(base)+5):
                         
-                #         print("i: ", i)
-                #         try:
-                #             peca = base_filtrada['CONJUNTO'][i]
-                #             qtde = str(base_filtrada['QUANTIDADE'][i])
-                #             data = base_filtrada['CARIMBO'][i]
-                #             pessoa = base_filtrada['FUNCIONÁRIO'][i]
-                #             c = preenchendo_montagem(data,pessoa,peca,qtde,wks1,c,i)
-                #             print("c: ", c)
-                #         except:
-                #             pass
+                        print("i: ", i)
+                        try:
+                            peca = base_filtrada['CONJUNTO'][i]
+                            qtde = str(base_filtrada['QUANTIDADE'][i])
+                            data = base_filtrada['CARIMBO'][i]
+                            pessoa = base_filtrada['FUNCIONÁRIO'][i]
+                            c = preenchendo_montagem(data,pessoa,peca,qtde,wks1,c,i)
+                            print("c: ", c)
+                        except:
+                            pass
 
                 time.sleep(2)            
 
