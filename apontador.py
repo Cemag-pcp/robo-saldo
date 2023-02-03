@@ -960,7 +960,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
     except:
 
         #processo
-        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
+        WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
         time.sleep(1)
         WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
         
@@ -990,24 +990,22 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
             time.sleep(1)
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
-
-            time.sleep(10)
-
+            
             try:
-
+                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("carregando")
+            except:
+                pass
+            
+            try:
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('S' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
-
-                try:
-                    nav.switch_to.default_content()
-                except: 
-                    pass
-
                 time.sleep(2)
+                
                 nav.switch_to.default_content()
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
                 time.sleep(3)
@@ -1016,8 +1014,9 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                 
                 c = 3
-
             except:
+                print('Funcionou')
+
                 wks1.update('Q' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
                 print('deu bom')
                 c = c + 2
@@ -1146,15 +1145,15 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
-            time.sleep(10)
-
+            while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                print("carregando")
+            
             try:
-
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('J' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
@@ -1171,10 +1170,6 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('I' + str(i+1), 'OK ROBINHO - ' + ' ' + data_hoje() + ' ' + hora_atual())
                 print('deu bom')
                 c = c + 2
-
-            # hora = datetime.now()
-            # hora = hora.strftime("%H:%M:%S")
-            # wks1.update('F' + str(i+2), hora)
 
             print(c)
     return(c)
@@ -1328,15 +1323,19 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
-            time.sleep(10)
+            try:
+                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("carregando")
+            except:
+                pass
 
             try:
 
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 
                 time.sleep(2)
@@ -1444,13 +1443,13 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         print("deu ruim")
 
         try:
-            iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+            iframe1 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
             nav.switch_to.frame(iframe1)
         except:
             pass
 
         #processo
-        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S Est')
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S Est')
         time.sleep(1)
         WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
 
@@ -1465,7 +1464,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
             print("deu ruim")
             
             try:
-                iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
+                iframe1 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
                 nav.switch_to.frame(iframe1)
             except:
                 pass
@@ -1487,15 +1486,19 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
-            time.sleep(10)
+            try:
+                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("carregando")
+            except:
+                pass
 
             try:
 
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('K' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
@@ -1630,15 +1633,19 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
-            time.sleep(10)
+            try:
+                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("carregando")
+            except:
+                pass
 
             try:
 
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('J' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
@@ -1790,15 +1797,19 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
-            time.sleep(10)
+            try:
+                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("carregando")
+            except:
+                pass
 
             try:
 
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
-                texto_erro = WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                WebDriverWait(nav, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('T' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
