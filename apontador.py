@@ -991,16 +991,17 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
             
+            nav.switch_to.default_content()
+
             try:
-                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-                    print("carregando")
+                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("Carregando")
             except:
-                pass
+                print("Carregou")
             
             try:
                 # volta p janela principal (fora do iframe)
 
-                nav.switch_to.default_content()
                 texto_erro = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('S' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
@@ -1145,8 +1146,13 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
-            while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-                print("carregando")
+            nav.switch_to.default_content()
+
+            try:
+                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("Carregando")
+            except:
+                print("Carregou")
             
             try:
                 # volta p janela principal (fora do iframe)
@@ -1323,11 +1329,13 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
+            nav.switch_to.default_content()
+
             try:
-                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-                    print("carregando")
+                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("Carregando")
             except:
-                pass
+                print("Carregou")
 
             try:
 
@@ -1486,11 +1494,13 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
+            nav.switch_to.default_content()
+
             try:
-                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-                    print("carregando")
+                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("Carregando")
             except:
-                pass
+                print("Carregou")
 
             try:
 
@@ -1632,18 +1642,18 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
             time.sleep(1)
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
-
+            
+            nav.switch_to.default_content()
             try:
-                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-                    print("carregando")
+                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("Carregando")
             except:
-                pass
+                print("Carregou")
 
             try:
 
                 # volta p janela principal (fora do iframe)
 
-                nav.switch_to.default_content()
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('J' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
@@ -1797,11 +1807,13 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
+            nav.switch_to.default_content()
+
             try:
-                while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-                    print("carregando")
+                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                    print("Carregando")
             except:
-                pass
+                print("Carregou")
 
             try:
 
@@ -2111,8 +2123,8 @@ while 'a' == 'a':
 
             for d in range(len(datas)):
 
-                #data = datas[d]
-                data = data_hoje()
+                data = datas[d]
+                #data = data_hoje()
                 #data = '01/02/2023'
                 
                 ########## CONSULTAR SALDO ###########
