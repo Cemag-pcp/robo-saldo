@@ -90,34 +90,52 @@ def menu_innovaro(nav):
         pass
 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+
     time.sleep(2)
+
+def listar(nav, classe):
+    lista_menu = nav.find_elements(By.CLASS_NAME, classe)
+    
+    elementos_menu = []
+
+    for x in range (len(lista_menu)):
+        a = lista_menu[x].text
+        elementos_menu.append(a)
+
+    test_lista = pd.DataFrame(elementos_menu)
+    test_lista = test_lista.loc[test_lista[0] != ""].reset_index()
+
+    return(lista_menu, test_lista)
 
 def menu_apontamento(nav):
 
-    #clicando em produção
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[31]/span[2]'))).click()
-    time.sleep(2)
+    try:
+        nav.switch_to.default_content()
+    except:
+        pass
 
-    #clicando em SFC
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[37]/span[2]'))).click()
-    time.sleep(2)
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
 
-    #clicando em apontamento
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-    time.sleep(3)
+    lista_menu[99].click() ##clicando em produção
+    time.sleep(1.5)
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[105].click() ##clicando em SFC    
+    time.sleep(1.5)
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[107].click() ##clicando em apontamento
 
 def menu_transf(nav):
 
-    #clicando em transferencia
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[1]'))).click()
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[92].click() ##clicando em transf
+    time.sleep(1.5)
 
-    time.sleep(2)
-
-    #clicando em transf entre deposito
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[25]/span[2]'))).click()
-
-    time.sleep(3)
-
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[93].click() ##clicando em solicitação de transf    
+    time.sleep(1.5)
+    
 def menu_transf_2(nav):
     
     #clicando em transf
@@ -134,20 +152,28 @@ def fechar_menu_consulta(nav):
     except:
         pass
 
+
     #fecha aba de consulta
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div"))).click()
-    
+    time.sleep(1.5)
+    try:
+        WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div"))).click()
+    except:
+        pass
+
     time.sleep(2)
     menu_innovaro(nav)
     time.sleep(2)
 
     #fecha consulta
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[75].click() ##clicando em consultas 
+    time.sleep(1.5)
 
 def fechar_menu_transf(nav):
     
     try:
         nav.switch_to.default_content()
+        time.sleep(2)
     except:
         pass
 
@@ -157,12 +183,11 @@ def fechar_menu_transf(nav):
     time.sleep(1.5)
     menu_innovaro(nav)
 
-    #fecha aba de consulta
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[2]'))).click()
-
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[92].click() ##clicando em transf
+    time.sleep(1)
+    lista_menu[72].click() ##clicando em transf
     time.sleep(1.5)
-    #fecha estoque
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[8]/div[2]/div[4]/span[1]"))).click()
 
 def fechar_menu_apont(nav):
     
@@ -175,16 +200,11 @@ def fechar_menu_apont(nav):
 
     menu_innovaro(nav)
 
-    time.sleep(1.5)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[36]/span[2]'))).click()
-    time.sleep(3)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[31]/span[2]'))).click()
-    time.sleep(4)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[2]/table/tbody/tr/td[1]/div/table/tbody/tr/td[2]"))).click()
-    time.sleep(5)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div"))).click()
-    time.sleep(2)
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
 
+    lista_menu[90].click() ##clicando em produção
+    lista_menu[84].click() ##clicando em produção
+    
 ########### ACESSANDO PLANILHAS DE TRANSFERÊNCIA ###########
 
 def planilha_serra_transf(data, filename):
@@ -983,7 +1003,20 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
             #qtde
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
             
-            time.sleep(3)
+            time.sleep(2)
+
+            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            
+            time.sleep(2)
+
+            qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
+            
+            if qtd_corfirmar=="":
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -999,6 +1032,8 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
             except:
                 print("Carregou")
             
+            time.sleep(2)
+
             try:
                 # volta p janela principal (fora do iframe)
 
@@ -1007,11 +1042,16 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('S' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
                 
+                time.sleep(1)
+
                 nav.switch_to.default_content()
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                menu_innovaro(nav)
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                time.sleep(3)
+                
+                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                lista_menu[107].click() ##clicando em transf
+                time.sleep(1.5)
+                
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                 
                 c = 3
@@ -1140,6 +1180,20 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
 
             time.sleep(3)
 
+            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            
+            time.sleep(2)
+
+            qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
+            
+            if qtd_corfirmar=="":
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
+
+
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
             time.sleep(1)
@@ -1154,6 +1208,8 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
             except:
                 print("Carregou")
             
+            time.sleep(2)
+            
             try:
                 # volta p janela principal (fora do iframe)
 
@@ -1163,11 +1219,15 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('J' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
+
                 nav.switch_to.default_content()
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                menu_innovaro(nav)
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                time.sleep(3)
+                
+                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                lista_menu[107].click() ##clicando em transf
+                time.sleep(1.5)
+                
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                 
                 c = 3
@@ -1307,6 +1367,19 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
             time.sleep(3)
 
+            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            
+            time.sleep(2)
+
+            qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
+            
+            if qtd_corfirmar=="":
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
+
             #branco
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
 
@@ -1338,6 +1411,8 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             except:
                 print("Carregou")
 
+            time.sleep(2)
+
             try:
 
                 # volta p janela principal (fora do iframe)
@@ -1348,11 +1423,15 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 
                 time.sleep(2)
+
                 nav.switch_to.default_content()
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                menu_innovaro(nav)
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                time.sleep(3)
+                
+                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                lista_menu[107].click() ##clicando em transf
+                time.sleep(1.5)
+                
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                         
                 c = 3
@@ -1487,7 +1566,21 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
 
             #qtde
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
+            
             time.sleep(3)
+
+            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            
+            time.sleep(2)
+
+            qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
+            
+            if qtd_corfirmar=="":
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
@@ -1503,6 +1596,8 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
             except:
                 print("Carregou")
 
+            time.sleep(2)
+
             try:
 
                 # volta p janela principal (fora do iframe)
@@ -1513,11 +1608,15 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('K' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
+
                 nav.switch_to.default_content()
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                menu_innovaro(nav)
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                time.sleep(3)
+                
+                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                lista_menu[107].click() ##clicando em transf
+                time.sleep(1.5)
+                
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                 
                 c = 3
@@ -1638,6 +1737,19 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
             time.sleep(3)
 
+            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            
+            time.sleep(2)
+
+            qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
+            
+            if qtd_corfirmar=="":
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
+
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
             time.sleep(1)
@@ -1651,6 +1763,8 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
             except:
                 print("Carregou")
 
+            time.sleep(2)
+
             try:
 
                 # volta p janela principal (fora do iframe)
@@ -1660,11 +1774,15 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('J' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
+
                 nav.switch_to.default_content()
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                menu_innovaro(nav)
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                time.sleep(3)
+                
+                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                lista_menu[107].click() ##clicando em transf
+                time.sleep(1.5)
+                
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                 
                 c = 3
@@ -1804,6 +1922,19 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)
             time.sleep(3)
 
+            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            
+            time.sleep(2)
+
+            qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
+            
+            if qtd_corfirmar=="":
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                time.sleep(2)
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
+
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
             time.sleep(1)
@@ -1818,6 +1949,8 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
             except:
                 print("Carregou")
 
+            time.sleep(2)
+
             try:
 
                 # volta p janela principal (fora do iframe)
@@ -1828,11 +1961,15 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('T' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
+
                 nav.switch_to.default_content()
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                menu_innovaro(nav)
                 time.sleep(3)
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                time.sleep(3)
+                
+                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                lista_menu[107].click() ##clicando em transf
+                time.sleep(1.5)
+                
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
                 
                 c = 3
@@ -1849,13 +1986,22 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
 
 def consulta_saldo(data, nav):
     
-    time.sleep(0.5)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[4]/span[1]'))).click()
-    time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
-    time.sleep(0.5)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@title='-1897148410, Saldos de recursos.il']"))).click()
-    time.sleep(1)
+    # try:
+    #     nav.switch_to.default_content()
+    # except:
+    #     pass
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+
+    lista_menu[72].click() ##clicando em estoque
+    time.sleep(1.5)
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[75].click() ##clicando em consultas 
+    time.sleep(1.5)
+    
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[85].click() ##clicando em apontamento
 
     #mudando iframe
     iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
@@ -1947,6 +2093,7 @@ def consulta_saldo(data, nav):
                 for j in range(len(tabelona)):
                     if len(tabelona['Saldo'][j]) >= 6 :
                         tabelona['Saldo'][j] = float(tabelona['Saldo'][j]) / 10000
+
             except:
                 pass
 
@@ -1970,14 +2117,16 @@ def consulta_saldo(data, nav):
     return(df_final)
 
 def consulta_saldo_chapas(data, nav):
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[92].click() ##clicando em transf
+    time.sleep(1.5)
     
-    time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[24]/span[2]'))).click()
-    time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[7]/span[1]'))).click()
-    time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@title='-1897148410, Saldos de recursos.il']"))).click()
-    time.sleep(2)
+    lista_menu[75].click() ##clicando em consultas 
+    time.sleep(1.5)
+    
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu[86].click() ##clicando em apontamento
     
     #fechando aba anterior
     nav.switch_to.default_content()
@@ -2100,6 +2249,8 @@ def consulta_saldo_chapas(data, nav):
 
 ########## LOOP ###########
 
+##### teste ######
+
 while 'a' == 'a':
 
     try:
@@ -2110,7 +2261,7 @@ while 'a' == 'a':
 
         if today != 1:
 
-            datas = [data_hoje(), data_sabado(), data_sexta()]
+            datas = [data_hoje(), data_ontem()]
         
         else:
 
@@ -2126,7 +2277,7 @@ while 'a' == 'a':
 
             for d in range(len(datas)):
 
-                data = datas[d]
+                data = datas[0]
                 #data = data_hoje()
                 #data = '01/02/2023'
                 
@@ -2214,7 +2365,7 @@ while 'a' == 'a':
 
                 i = 0
 
-                menu_transf_2(nav)
+                menu_transf(nav)
 
                 wks1, base, base_filtrada = planilha_corte_transf(data, filename)
 
@@ -2262,12 +2413,16 @@ while 'a' == 'a':
                 wks1, base, base_filtrada, pessoa  = planilha_serra(data, filename)
 
                 if not len(base_filtrada) == 0:
-
+                    
+                    time.sleep(1)
                     nav.switch_to.default_content()
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                    menu_innovaro(nav)
                     time.sleep(3)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                    time.sleep(3)
+                    
+                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                    lista_menu[107].click() ##clicando em transf
+                    time.sleep(1.5)
+                    
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
                     c = 3
@@ -2292,13 +2447,17 @@ while 'a' == 'a':
                 wks1, base, base_filtrada, pessoa  = planilha_usinagem(data, filename)
 
                 if not len(base_filtrada) == 0:
+                    
+                    time.sleep(1)
 
                     nav.switch_to.default_content()
-                    time.sleep(2)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                    menu_innovaro(nav)
                     time.sleep(3)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                    time.sleep(3)
+                    
+                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                    lista_menu[107].click() ##clicando em transf
+                    time.sleep(1.5)
+                    
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
                     c = 3
@@ -2323,14 +2482,20 @@ while 'a' == 'a':
                 wks1, base, base_filtrada, pessoa  = planilha_corte(data, filename)
 
                 if not len(base_filtrada) == 0:
+                    
+                    time.sleep(1)
 
-                    time.sleep(2)
                     nav.switch_to.default_content()
-                    time.sleep(2)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                    menu_innovaro(nav)
                     time.sleep(3)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                    time.sleep(3)
+                    
+                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                    test_lista = test_lista.loc[test_lista[0] == 'Produção'].index[0]
+                    
+                    lista_menu[test_lista+1].click()
+
+                    time.sleep(1.5)
+                    
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
                     c = 3
@@ -2356,13 +2521,18 @@ while 'a' == 'a':
                 wks1, base, base_filtrada  = planilha_estamparia(data, filename)
 
                 if not len(base_filtrada) == 0:
+                    
+                    time.sleep(1)
 
                     time.sleep(2)
                     nav.switch_to.default_content()
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                    menu_innovaro(nav)
                     time.sleep(3)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                    time.sleep(3)
+                    
+                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                    lista_menu[107].click() ##clicando em transf
+                    time.sleep(1.5)
+                    
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
                     c = 3
@@ -2390,10 +2560,13 @@ while 'a' == 'a':
 
                     time.sleep(2)
                     nav.switch_to.default_content()
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                    menu_innovaro(nav)
                     time.sleep(3)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                    time.sleep(3)
+                    
+                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                    lista_menu[107].click() ##clicando em transf
+                    time.sleep(1.5)
+                    
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
                     c = 3
@@ -2422,10 +2595,13 @@ while 'a' == 'a':
 
                     time.sleep(2)
                     nav.switch_to.default_content()
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bt_1892603865"]/table/tbody/tr/td[2]'))).click()
+                    menu_innovaro(nav)
                     time.sleep(3)
-                    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="divTreeNavegation"]/div[39]/span[2]'))).click()
-                    time.sleep(3)
+                    
+                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+                    lista_menu[107].click() ##clicando em transf
+                    time.sleep(1.5)
+                    
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
 
                     c = 3
@@ -2447,7 +2623,10 @@ while 'a' == 'a':
 
                 time.sleep(2)            
 
-                fechar_menu_apont(nav)
-    
+                try:
+                    fechar_menu_apont(nav)
+                except:
+                    pass
+
     except:
         pass
