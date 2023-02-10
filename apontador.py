@@ -114,27 +114,37 @@ def menu_apontamento(nav):
     except:
         pass
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Produção'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em producao
+    time.sleep(0.5)
 
-    lista_menu[99].click() ##clicando em produção
-    time.sleep(1.5)
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Controle de fábrica (SFC)'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em SFC
+    time.sleep(0.5)
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[105].click() ##clicando em SFC    
-    time.sleep(1.5)
-
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[107].click() ##clicando em apontamento
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em SFC
+    time.sleep(0.5)
 
 def menu_transf(nav):
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[92].click() ##clicando em transf
-    time.sleep(1.5)
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Transferência'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em transf
+    time.sleep(0.5)
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[93].click() ##clicando em solicitação de transf    
-    time.sleep(1.5)
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Solicitação de transferência entre depósitos'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em solicitação de transf  
+    time.sleep(0.5)
     
 def menu_transf_2(nav):
     
@@ -152,7 +162,6 @@ def fechar_menu_consulta(nav):
     except:
         pass
 
-
     #fecha aba de consulta
     time.sleep(1.5)
     try:
@@ -164,10 +173,11 @@ def fechar_menu_consulta(nav):
     menu_innovaro(nav)
     time.sleep(2)
 
-    #fecha consulta
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[75].click() ##clicando em consultas 
-    time.sleep(1.5)
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Consultas'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em consulta
+    time.sleep(0.5)
 
 def fechar_menu_transf(nav):
     
@@ -183,11 +193,17 @@ def fechar_menu_transf(nav):
     time.sleep(1.5)
     menu_innovaro(nav)
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[92].click() ##clicando em transf
-    time.sleep(1)
-    lista_menu[72].click() ##clicando em transf
-    time.sleep(1.5)
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Transferência'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em trasnferencia
+    time.sleep(0.5)
+
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Estoque'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em estoque
+    time.sleep(0.5)
 
 def fechar_menu_apont(nav):
     
@@ -200,10 +216,17 @@ def fechar_menu_apont(nav):
 
     menu_innovaro(nav)
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Controle de fábrica (SFC)'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em Controle de fábrica (SFC)
+    time.sleep(0.5)
 
-    lista_menu[90].click() ##clicando em produção
-    lista_menu[84].click() ##clicando em produção
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Produção'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em Produção
+    time.sleep(0.5)
     
 ########### ACESSANDO PLANILHAS DE TRANSFERÊNCIA ###########
 
@@ -880,10 +903,14 @@ def selecionar_todos(nav):
     except:
         pass
 
+    try:
     #confirmar baixa
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
-    time.sleep(10)
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]/p'))).click()
+        time.sleep(10)
+    except:
+        pass
     
     #texto erro
     try:
@@ -891,6 +918,7 @@ def selecionar_todos(nav):
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[2]/td/div/button'))).click()
     except:
         #gravar
+        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/span[2]/p'))).click()
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/span[2]/p'))).click()
         time.sleep(10)
 
@@ -1046,10 +1074,13 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
 
                 nav.switch_to.default_content()
                 menu_innovaro(nav)
-                time.sleep(3)
+                time.sleep(2)
                 
-                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                lista_menu[107].click() ##clicando em transf
+                lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                
+                lista_menu[click_producao].click() ##clicando em Apontamento da produção
+ 
                 time.sleep(1.5)
                 
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -1224,8 +1255,10 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
                 menu_innovaro(nav)
                 time.sleep(3)
                 
-                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                lista_menu[107].click() ##clicando em transf
+                lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                
+                lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
                 
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -1380,8 +1413,8 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
-            #branco
-            WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
+            # #branco
+            # WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
 
             if mortas != '':
 
@@ -1399,7 +1432,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
-            time.sleep(1)
+            time.sleep(3)
 
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
@@ -1428,8 +1461,10 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 menu_innovaro(nav)
                 time.sleep(3)
                 
-                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                lista_menu[107].click() ##clicando em transf
+                lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                
+                lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
                 
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -1613,8 +1648,10 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 menu_innovaro(nav)
                 time.sleep(3)
                 
-                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                lista_menu[107].click() ##clicando em transf
+                lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                
+                lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
                 
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -1779,8 +1816,10 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
                 menu_innovaro(nav)
                 time.sleep(3)
                 
-                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                lista_menu[107].click() ##clicando em transf
+                lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                
+                lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
                 
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -1966,8 +2005,10 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
                 menu_innovaro(nav)
                 time.sleep(3)
                 
-                lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                lista_menu[107].click() ##clicando em transf
+                lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                
+                lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
                 
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -1990,18 +2031,24 @@ def consulta_saldo(data, nav):
     #     nav.switch_to.default_content()
     # except:
     #     pass
-
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-
-    lista_menu[72].click() ##clicando em estoque
-    time.sleep(1.5)
-
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[75].click() ##clicando em consultas 
-    time.sleep(1.5)
     
     lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[85].click() ##clicando em apontamento
+    click_producao = test_lista.loc[test_lista[0] == 'Estoque'].index[0]
+    
+    lista_menu[click_producao+1].click() ##clicando em estoque
+    time.sleep(0.5)
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_lista.loc[test_lista[0] == 'Consultas'].index[0]
+    
+    lista_menu[click_producao+1].click() ##clicando em consulta
+    time.sleep(0.5)
+
+    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_lista.loc[test_lista[0] == 'Saldos de recursos'].index[0]
+    
+    lista_menu[click_producao+1].click() ##clicando em apontamento
+    time.sleep(0.5)
 
     #mudando iframe
     iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
@@ -2118,15 +2165,23 @@ def consulta_saldo(data, nav):
 
 def consulta_saldo_chapas(data, nav):
 
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[92].click() ##clicando em transf
-    time.sleep(1.5)
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Transferência'].reset_index(drop=True)['index'][0]
     
-    lista_menu[75].click() ##clicando em consultas 
-    time.sleep(1.5)
+    lista_menu[click_producao].click() ##clicando em transf
+    time.sleep(0.5)
+
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Consultas'].reset_index(drop=True)['index'][0]
     
-    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-    lista_menu[86].click() ##clicando em apontamento
+    lista_menu[click_producao].click() ##clicando em consultas
+    time.sleep(0.5)
+    
+    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+    click_producao = test_list.loc[test_list[0] == 'Saldos de recursos'].reset_index(drop=True)['index'][0]
+    
+    lista_menu[click_producao].click() ##clicando em consulta
+    time.sleep(0.5)
     
     #fechando aba anterior
     nav.switch_to.default_content()
@@ -2419,8 +2474,10 @@ while 'a' == 'a':
                     menu_innovaro(nav)
                     time.sleep(3)
                     
-                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                    lista_menu[107].click() ##clicando em transf
+                    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                    
+                    lista_menu[click_producao].click() ##clicando em producao
                     time.sleep(1.5)
                     
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -2454,8 +2511,10 @@ while 'a' == 'a':
                     menu_innovaro(nav)
                     time.sleep(3)
                     
-                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                    lista_menu[107].click() ##clicando em transf
+                    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                    
+                    lista_menu[click_producao].click() ##clicando em producao
                     time.sleep(1.5)
                     
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -2489,10 +2548,10 @@ while 'a' == 'a':
                     menu_innovaro(nav)
                     time.sleep(3)
                     
-                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                    test_lista = test_lista.loc[test_lista[0] == 'Produção'].index[0]
+                    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                     
-                    lista_menu[test_lista+1].click()
+                    lista_menu[click_producao].click() ##clicando em producao
 
                     time.sleep(1.5)
                     
@@ -2529,8 +2588,10 @@ while 'a' == 'a':
                     menu_innovaro(nav)
                     time.sleep(3)
                     
-                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                    lista_menu[107].click() ##clicando em transf
+                    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                    
+                    lista_menu[click_producao].click() ##clicando em producao
                     time.sleep(1.5)
                     
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -2563,8 +2624,10 @@ while 'a' == 'a':
                     menu_innovaro(nav)
                     time.sleep(3)
                     
-                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                    lista_menu[107].click() ##clicando em transf
+                    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                    
+                    lista_menu[click_producao].click() ##clicando em producao
                     time.sleep(1.5)
                     
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
@@ -2598,8 +2661,10 @@ while 'a' == 'a':
                     menu_innovaro(nav)
                     time.sleep(3)
                     
-                    lista_menu, test_lista = listar(nav, 'webguiTreeNodeLabel')
-                    lista_menu[107].click() ##clicando em transf
+                    lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                    
+                    lista_menu[click_producao].click() ##clicando em producao
                     time.sleep(1.5)
                     
                     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
