@@ -227,6 +227,8 @@ def fechar_menu_apont(nav):
     
     lista_menu[click_producao].click() ##clicando em Produção
     time.sleep(0.5)
+
+    menu_innovaro(nav)
     
 ########### ACESSANDO PLANILHAS DE TRANSFERÊNCIA ###########
 
@@ -2332,7 +2334,7 @@ while 'a' == 'a':
 
             for d in range(len(datas)):
 
-                data = datas[0]
+                data = datas[d]
                 #data = data_hoje()
                 #data = '01/02/2023'
                 
