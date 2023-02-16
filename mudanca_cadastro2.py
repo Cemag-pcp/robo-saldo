@@ -276,15 +276,6 @@ def expandir_3(j, chapa, nav):
     except:
         peca_atual3 = ''
 
-    # table_prod = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[25]/td/table/tbody/tr[1]/td[1]/table/tbody/tr/td[1]/div/table/tbody/tr[1]/td[1]/table/tbody/tr[15]/td/table')))
-    # table_html_prod = table_prod.get_attribute('outerHTML')
-        
-    # tabelona = pd.read_html(str(table_html_prod), header=None)
-    # tabelona = tabelona[7]
-    # tabelona = tabelona.dropna(axis=1, how='all')
-    # tabelona = tabelona.dropna(how = 'all')
-    # tabelona = tabelona.drop(columns={12,14,15,17})
-
     if peca_atual3 == '':
 
         if peca_atual2 != '':
