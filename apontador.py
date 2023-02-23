@@ -248,7 +248,7 @@ def planilha_serra_transf(data, filename):
     #SERRA#
 
     sheet = 'RQ PC-001-000 (APONTAMENTO SERRA)'
-    worksheet1 = 'USO DO PCP'
+    worksheet1 = 'USO DO PCP 2'
 
     sa = gspread.service_account(filename)
     sh = sa.open(sheet)
@@ -270,13 +270,17 @@ def planilha_serra_transf(data, filename):
             base['DATA'][i] = base['DATA'][i-1]
 
     #filtrando peças que não foram apontadas
-    base_filtrada  = base[base['APONTAMENTO'].isnull()]
+    #base_filtrada = base[base['APONTAMENTO'].isnull()]
+    base_filtrada = base[base['APONTAMENTO'] == '']
 
     #filtrando data de hoje
     base_filtrada = base_filtrada.loc[base_filtrada.DATA == data]
 
     #filtrando por mat prima que não foi transferida
-    base_filtrada  = base_filtrada[base_filtrada['TRANSF'].isnull()]
+    base_filtrada = base_filtrada[base_filtrada['TRANSF'] == '']
+
+    #filtrando por mat prima que não foi transferida
+    base_filtrada = base_filtrada[base_filtrada['CÓDIGO'] != '']
 
     #filtrando data de hoje
     #base_filtrada = base_filtrada.loc[base_filtrada.TRANSFERÊNCIA == '']
@@ -371,7 +375,7 @@ def planilha_serra(data, filename):
     #SERRA#
 
     sheet = 'RQ PC-001-000 (APONTAMENTO SERRA)'
-    worksheet1 = 'USO DO PCP'
+    worksheet1 = 'USO DO PCP 2'
 
     sa = gspread.service_account(filename)
     sh = sa.open(sheet)
@@ -1199,7 +1203,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
 
                 texto_erro = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-                wks1.update('S' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
+                wks1.update('R' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
                 
                 time.sleep(1)
@@ -1230,7 +1234,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
             except:
                 print('Funcionou')
 
-                wks1.update('Q' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
+                wks1.update('S' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
                 print('deu bom')
                 c = c + 2
 
@@ -2272,6 +2276,8 @@ def consulta_saldo(data, nav):
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/span[2]/p'))).click()
             except:
                 pass
+    
+            iframe_list = nav.find_elements(By.CLASS_NAME, 'tab-frame')
 
             for iframe in range(len(iframe_list)):
                 time.sleep(1)
@@ -2294,8 +2300,16 @@ def consulta_saldo(data, nav):
                 print("Carregou")  
             
             #mudando iframe
-            iframe1 = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/iframe')))
-            nav.switch_to.frame(iframe1)
+            iframe_list = nav.find_elements(By.CLASS_NAME, 'tab-frame')
+
+            for iframe in range(len(iframe_list)):
+                time.sleep(1)
+                try:
+                    nav.switch_to.default_content()
+                    nav.switch_to.frame(iframe_list[iframe])
+                    print(iframe)
+                except:
+                    pass
 
             table_prod = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table')))
             table_html_prod = table_prod.get_attribute('outerHTML')
@@ -2510,16 +2524,7 @@ def consulta_saldo_chapas(data, nav):
 
 def fechar_tabs(nav):
 
-    iframe_list = nav.find_elements(By.CLASS_NAME, 'tab-frame')
-
-    for iframe in range(len(iframe_list)):
-        time.sleep(1)
-        try:
-            nav.switch_to.default_content()
-            nav.switch_to.frame(iframe_list[iframe])
-            print(iframe)
-        except:
-            pass
+    nav.switch_to.default_content()
 
     try:
         tab1 = nav.find_elements(By.CLASS_NAME, 'process-tab-right-active') #listar abas ativas (aba que está selecinada)
@@ -2548,7 +2553,7 @@ while 'a' == 'a':
 
         if today != 1:
 
-            datas = [data_hoje()]
+            datas = [data_hoje(), data_ontem()]
         
         else:
 
@@ -2566,7 +2571,7 @@ while 'a' == 'a':
 
                 time.sleep(3)
 
-                data = datas[0]
+                data = datas[d]
                 #data = data_hoje()
                 #data = '01/02/2023'
                 
@@ -2621,7 +2626,7 @@ while 'a' == 'a':
                                         try:
                                             filtrado = transferidas.loc[transferidas.MATERIAL == peca]
                                             ok = filtrado['index'][j]
-                                            wks1.update("R" + str(ok+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
+                                            wks1.update("T" + str(ok+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
                                         except:
                                             pass
                                 except:
