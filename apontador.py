@@ -61,13 +61,13 @@ def hora_atual():
 
 def acessar_innovaro():
     
-    #options = webdriver.ChromeOptions()
-    #options.add_argument("--headless")
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
     
     #link1 = "http://192.168.3.141/"
     link1 = 'http://cemag.innovaro.com.br/sistema'
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-    nav = webdriver.Chrome()#chrome_options=options)
+    nav = webdriver.Chrome(chrome_options=options)
     time.sleep(2)
     nav.get(link1)
 
@@ -556,8 +556,8 @@ def planilha_estamparia(data, filename):
 
     #ESTAMPARIA#
 
-    sheet = 'RQ PC-003-000 (APONTAMENTO ESTAMPARIA)'
-    worksheet1 = 'FICHA DE APONTAMENTO'
+    sheet = 'RQ PCP-003-001 (APONTAMENTO ESTAMPARIA) e RQ PCP-XXX-000 (SEQUENCIAMENTO ESTAMPARIA)'
+    worksheet1 = 'APONTAMENTO PCP (RQ PC 003 001)'
 
     sa = gspread.service_account(filename)
     sh = sa.open(sheet)
@@ -566,9 +566,9 @@ def planilha_estamparia(data, filename):
 
     base = wks1.get()
     base = pd.DataFrame(base)
-    base = base.iloc[:,0:10]
+    base = base.iloc[:,0:15]
 
-    headers = wks1.row_values(5)[0:10]
+    headers = wks1.row_values(5)[0:15]
 
     base = base.set_axis(headers, axis=1, inplace=False)[5:]
 
@@ -595,7 +595,9 @@ def planilha_estamparia(data, filename):
 
     base_filtrada['MATRÍCULA'] = base_filtrada['MATRÍCULA'].str[:4]
 
-    base_filtrada = base_filtrada[['DATA','MATRÍCULA','CÓDIGO','QTD']]
+    base_filtrada = base_filtrada.loc[(base_filtrada['QTD REALIZADA'] != '')]
+    
+    base_filtrada = base_filtrada[['DATA','MATRÍCULA','CÓDIGO','QTD REALIZADA']]
 
     return(wks1, base, base_filtrada)
 
@@ -1514,7 +1516,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
         time.sleep(3)
         nav.switch_to.default_content()
         time.sleep(1.5)
-        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         time.sleep(1.5)
         webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
         time.sleep(1.5)
@@ -1720,9 +1722,9 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
     try:
         nav.switch_to.default_content()
         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-        time.sleep(0.5)
+        time.sleep(1.5)
         webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
-        time.sleep(0.5)
+        time.sleep(1.5)
         webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
     except:
         print("deu ruim")
@@ -1741,9 +1743,9 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
         try:
             nav.switch_to.default_content()
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-            time.sleep(0.5)
+            time.sleep(1.5)
             webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
-            time.sleep(0.5)
+            time.sleep(1.5)
             webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
         except:
             print("deu ruim")
@@ -1802,7 +1804,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 nav.switch_to.default_content()
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-                wks1.update('K' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
+                wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
 
@@ -1821,7 +1823,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 c = 3
 
             except:
-                wks1.update('J' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
+                wks1.update('N' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
                 print('deu bom')
                 c = c + 2
 
@@ -2850,7 +2852,7 @@ while 'a' == 'a':
                         print("i: ", i)
                         try:
                             peca = base_filtrada['CÓDIGO'][i]
-                            qtde = str(base_filtrada['QTD'][i])
+                            qtde = str(base_filtrada['QTD REALIZADA'][i])
                             data = base_filtrada['DATA'][i]
                             pessoa = base_filtrada['MATRÍCULA'][i]
                             c = preenchendo_estamparia(data,pessoa,peca,qtde,wks1,c,i)
