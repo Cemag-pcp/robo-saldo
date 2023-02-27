@@ -67,7 +67,7 @@ def acessar_innovaro():
     #link1 = "http://192.168.3.141/"
     link1 = 'http://cemag.innovaro.com.br/sistema'
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-    nav = webdriver.Chrome(chrome_options=options)
+    nav = webdriver.Chrome()#chrome_options=options)
     time.sleep(2)
     nav.get(link1)
 
@@ -557,7 +557,7 @@ def planilha_estamparia(data, filename):
     #ESTAMPARIA#
 
     sheet = 'RQ PCP-003-001 (APONTAMENTO ESTAMPARIA) e RQ PCP-XXX-000 (SEQUENCIAMENTO ESTAMPARIA)'
-    worksheet1 = 'APONTAMENTO PCP (RQ PC 003 001)'
+    worksheet1 = 'APONTAMENTO PCP (RQ PCP 003 001)'
 
     sa = gspread.service_account(filename)
     sh = sa.open(sheet)
@@ -1208,7 +1208,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('R' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
                 
-                time.sleep(1)
+                fechar_tabs(nav)
 
                 iframe_list = nav.find_elements(By.CLASS_NAME, 'tab-frame')
 
@@ -1220,6 +1220,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
                         print(iframe)
                     except:
                         pass
+
                 menu_innovaro(nav)
                 time.sleep(2)
                 
@@ -1229,9 +1230,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i):
                 lista_menu[click_producao].click() ##clicando em Apontamento da produção
  
                 time.sleep(1.5)
-                
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                
+                                
                 c = 3
             except:
                 print('Funcionou')
@@ -1415,8 +1414,12 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
 
                 time.sleep(2)
 
+                fechar_tabs(nav)
+
                 nav.switch_to.default_content()
+
                 menu_innovaro(nav)
+
                 time.sleep(3)
                 
                 lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
@@ -1424,9 +1427,7 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i):
                 
                 lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
-                
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                
+                                
                 c = 3
 
             except:
@@ -1621,6 +1622,8 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 
                 time.sleep(2)
 
+                fechar_tabs(nav)
+
                 nav.switch_to.default_content()
                 menu_innovaro(nav)
                 time.sleep(3)
@@ -1630,9 +1633,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 
                 lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
-                
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                        
+                                        
                 c = 3
 
             except:
@@ -1808,8 +1809,12 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
 
                 time.sleep(2)
 
+                fechar_tabs(nav)
+
                 nav.switch_to.default_content()
+
                 menu_innovaro(nav)
+
                 time.sleep(3)
                 
                 lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
@@ -1817,9 +1822,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 
                 lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
-                
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                
+                                
                 c = 3
 
             except:
@@ -1990,8 +1993,12 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
 
                 time.sleep(2)
 
+                fechar_tabs(nav)
+
                 nav.switch_to.default_content()
+
                 menu_innovaro(nav)
+
                 time.sleep(3)
                 
                 lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
@@ -1999,9 +2006,7 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
                 
                 lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
-                
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                
+                                
                 c = 3
 
             except:
@@ -2181,7 +2186,11 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
                 time.sleep(2)
 
                 nav.switch_to.default_content()
+
+                fechar_tabs(nav)
+
                 menu_innovaro(nav)
+                
                 time.sleep(3)
                 
                 lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
@@ -2189,9 +2198,7 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
                 
                 lista_menu[click_producao].click() ##clicando em Apontamento da produção
                 time.sleep(1.5)
-                
-                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[3]/div/table/tbody/tr/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                
+
                 c = 3
 
             except:
@@ -2568,6 +2575,8 @@ while 'a' == 'a':
         login(nav)
 
         while w < 3:
+            
+            w += 1
 
             for d in range(len(datas)):
 
@@ -2585,128 +2594,128 @@ while 'a' == 'a':
                 
                 menu_innovaro(nav)
 
-                time.sleep(1)
+                # time.sleep(1)
 
-                df_final = consulta_saldo(data, nav)
+                # df_final = consulta_saldo(data, nav)
 
-                time.sleep(2)
+                # time.sleep(2)
 
-                fechar_menu_consulta(nav)
+                # fechar_menu_consulta(nav)
 
                 ########## LOOP TRANSFERÊNCIA ###########
 
-                print("Indo para transferencia de tubos")
+                # print("Indo para transferencia de tubos")
 
-                time.sleep(2)
+                # time.sleep(2)
 
-                menu_transf(nav)
+                # menu_transf(nav)
 
-                wks1, base, base_filtrada, transferidas = planilha_serra_transf(data, filename)
+                # wks1, base, base_filtrada, transferidas = planilha_serra_transf(data, filename)
                 
-                transferidas = transferidas.reset_index()
+                # transferidas = transferidas.reset_index()
 
-                c = 3
+                # c = 3
 
-                i = 0
+                # i = 0
 
-                if not len(df_final) == 0:
+                # if not len(df_final) == 0:
 
-                    if not int(len(transferidas)) == 0:
+                #     if not int(len(transferidas)) == 0:
 
-                            for i in range(len(base)+1): # serra
+                #             for i in range(len(base)+1): # serra
 
-                                print("i: ", i)
-                                try:
-                                    peca = df_final['MATERIAL'][i]
-                                    qtde = str(df_final['PESO BARRAS'][i])
-                                    data = df_final['DATA'][i]
-                                    c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)            
-                                    print("c: ", c)
-                                    j = 0
+                #                 print("i: ", i)
+                #                 try:
+                #                     peca = df_final['MATERIAL'][i]
+                #                     qtde = str(df_final['PESO BARRAS'][i])
+                #                     data = df_final['DATA'][i]
+                #                     c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i)            
+                #                     print("c: ", c)
+                #                     j = 0
 
-                                    for j in range(len(transferidas)):
-                                        try:
-                                            filtrado = transferidas.loc[transferidas.MATERIAL == peca]
-                                            ok = filtrado['index'][j]
-                                            wks1.update("T" + str(ok+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
-                                        except:
-                                            pass
-                                except:
-                                    pass
+                #                     for j in range(len(transferidas)):
+                #                         try:
+                #                             filtrado = transferidas.loc[transferidas.MATERIAL == peca]
+                #                             ok = filtrado['index'][j]
+                #                             wks1.update("T" + str(ok+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
+                #                         except:
+                #                             pass
+                #                 except:
+                #                     pass
                             
-                            try:
-                                selecionar_todos(nav)
-                            except:
-                                pass
+                #             try:
+                #                 selecionar_todos(nav)
+                #             except:
+                #                 pass
 
-                ########## CONSULTAR SALDO CORTE ###########
+                # ########## CONSULTAR SALDO CORTE ###########
 
-                print("Verificando saldo de corte")
+                # print("Verificando saldo de corte")
                 
-                time.sleep(2)
+                # time.sleep(2)
 
-                #fechando aba anterior
-                nav.switch_to.default_content()
-                time.sleep(1)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="tabs"]/td[1]/table/tbody/tr/td[4]/span/div'))).click()
-                time.sleep(2)
+                # #fechando aba anterior
+                # nav.switch_to.default_content()
+                # time.sleep(1)
+                # WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="tabs"]/td[1]/table/tbody/tr/td[4]/span/div'))).click()
+                # time.sleep(2)
 
-                menu_innovaro(nav)
+                # menu_innovaro(nav)
 
-                time.sleep(1)
+                # time.sleep(1)
 
-                df_final = consulta_saldo_chapas(data, nav)
+                # df_final = consulta_saldo_chapas(data, nav)
 
-                time.sleep(2)
+                # time.sleep(2)
 
-                fechar_menu_consulta(nav)
+                # fechar_menu_consulta(nav)
 
-                print("indo para transferencia de chapas")
+                # print("indo para transferencia de chapas")
 
-                c = 3
+                # c = 3
 
-                i = 0
+                # i = 0
 
-                menu_transf(nav)
+                # menu_transf(nav)
 
-                wks1, base, base_filtrada = planilha_corte_transf(data, filename)
+                # wks1, base, base_filtrada = planilha_corte_transf(data, filename)
 
-                if not len(df_final) == 0:
+                # if not len(df_final) == 0:
 
-                    for i in range(len(base)+1): # serra
+                #     for i in range(len(base)+1): # serra
 
-                        print("i: ", i)
-                        try:
-                            peca = df_final['Código Chapa'][i]
-                            qtde = str(df_final['Peso'][i])
-                            data = df_final['Data'][i]
-                            c = preenchendo_corte_transf(data,peca,qtde,wks1,c,i)            
-                            print("c: ", c)
-                            j = 0
+                #         print("i: ", i)
+                #         try:
+                #             peca = df_final['Código Chapa'][i]
+                #             qtde = str(df_final['Peso'][i])
+                #             data = df_final['Data'][i]
+                #             c = preenchendo_corte_transf(data,peca,qtde,wks1,c,i)            
+                #             print("c: ", c)
+                #             j = 0
 
-                            for j in range(len(base)):
-                                try:
-                                    filtrado = base.loc[base['Código Chapa'] == peca]
-                                    filtrado = filtrado.loc[filtrado.Data == data]
-                                    filtrado = filtrado.loc[filtrado.Status == '']
-                                    filtrado = filtrado.reset_index()
-                                    ok = filtrado['index'][j]
-                                    wks1.update("L" + str(ok+1), 'OK ROBS ' + data_hoje() + ' ' + hora_atual()) 
-                                except:
-                                    pass
-                        except:
-                            pass
+                #             for j in range(len(base)):
+                #                 try:
+                #                     filtrado = base.loc[base['Código Chapa'] == peca]
+                #                     filtrado = filtrado.loc[filtrado.Data == data]
+                #                     filtrado = filtrado.loc[filtrado.Status == '']
+                #                     filtrado = filtrado.reset_index()
+                #                     ok = filtrado['index'][j]
+                #                     wks1.update("L" + str(ok+1), 'OK ROBS ' + data_hoje() + ' ' + hora_atual()) 
+                #                 except:
+                #                     pass
+                #         except:
+                #             pass
                     
-                    try:
-                        selecionar_todos(nav)
-                    except:
-                        pass
+                #     try:
+                #         selecionar_todos(nav)
+                #     except:
+                #         pass
 
-                fechar_menu_transf(nav)
+                # fechar_menu_transf(nav)
 
-                ########### LOOP APONTAMENTOS ###########
+                # ########### LOOP APONTAMENTOS ###########
 
-                time.sleep(2)
+                # time.sleep(2)
 
                 menu_apontamento(nav)
 
@@ -2824,13 +2833,12 @@ while 'a' == 'a':
 
                 print('Indo para estamparia')
 
-                wks1, base, base_filtrada  = planilha_estamparia(data, filename)
+                wks1, base, base_filtrada = planilha_estamparia(data, filename)
 
                 if not len(base_filtrada) == 0:
                     
                     time.sleep(1)
 
-                    time.sleep(2)
                     nav.switch_to.default_content()
                     menu_innovaro(nav)
                     time.sleep(3)
