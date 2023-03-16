@@ -8,6 +8,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import gspread
+import chromedriver_autoinstaller
+
+#chromedriver_autoinstaller.install()
 
 filename = "service_account.json"
 
@@ -305,6 +308,8 @@ def planilha_serra_transf(data, filename):
 
     base_filtrada = base_filtrada[base_filtrada['PESO BARRAS'] != '']
 
+    base_filtrada = base_filtrada.reset_index()
+
     transferidas = base_filtrada
 
     if len(base_filtrada) > 0:
@@ -325,7 +330,7 @@ def planilha_serra_transf(data, filename):
         for j in range(len(base_filtrada)):
             base_filtrada['PESO BARRAS'][j] = float(base_filtrada['PESO BARRAS'][j]) / 10
 
-        base_filtrada = base_filtrada.groupby(['DATA','MATERIAL']).sum().reset_index()
+        base_filtrada = base_filtrada.groupby(['index','DATA','MATERIAL']).sum().reset_index()
 
     base_filtrada = base_filtrada.loc[base_filtrada['PESO BARRAS'] > 0].reset_index(drop=True)
 
@@ -365,8 +370,10 @@ def planilha_corte_transf(data, filename):
     #peso diferente de 0
     base_filtrada = base_filtrada.loc[base_filtrada['Peso'] != '0,00']
 
-    base_filtrada =  base_filtrada[['Data','Código Chapa','Peso']]
-    
+    base_filtrada = base_filtrada.reset_index()
+
+    base_filtrada =  base_filtrada[['index','Data','Código Chapa','Peso']]
+
     if len(base_filtrada) > 0:
 
         for i in range(len(base)):
@@ -378,7 +385,7 @@ def planilha_corte_transf(data, filename):
         
         base_filtrada['Peso'] = base_filtrada['Peso'].astype(float)
 
-        base_filtrada = base_filtrada.groupby(['Data','Código Chapa']).sum().reset_index()
+        base_filtrada = base_filtrada.groupby(['index','Data','Código Chapa']).sum().reset_index()
 
     return(wks1, base, base_filtrada)
 
@@ -559,6 +566,8 @@ def planilha_corte(data, filename):
                 base_filtrada['Peça'][i] = "0" + base_filtrada['Peça'][i] 
         except:
             pass
+
+    base_filtrada = base_filtrada[base_filtrada['Erros'] == '']
 
     base_filtrada = base_filtrada[['Data finalização','Peça','Total Prod.','Mortas']]
 
@@ -750,7 +759,17 @@ def planilha_pintura(data, filename):
     #filtrando linhas que estão ok na pintura
     base_filtrada = base_filtrada.loc[base_filtrada['PINTURA'] != '']
 
-    base_filtrada = base_filtrada[['Carimbo','CÓDIGO','Qtd']]
+    base_filtrada['CÓDIGO'] = base_filtrada['CÓDIGO'].replace('-','_', regex=True)
+    base_filtrada['CÓDIGO'] = base_filtrada['CÓDIGO'].replace(' ','_', regex=True)
+    base_filtrada['n_underscore'] = base_filtrada['CÓDIGO'].str.find('_')
+    
+    for i in range(len(base)+5):
+        try:
+            base_filtrada['CÓDIGO'][i] = base_filtrada['CÓDIGO'][i][:base_filtrada['n_underscore'][i]]
+        except:
+            pass
+
+    base_filtrada = base_filtrada[['Carimbo','CÓDIGO','Qtd', 'Tipo','Cor','CONSUMO PU','CONSUMO PÓ','CATALISADOR']]
 
     pessoa = '4271'
 
@@ -994,6 +1013,8 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
     iframes(nav)
     
+    erro = 0
+
     #Insert
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
 
@@ -1146,8 +1167,14 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
             try:
                 # volta p janela principal (fora do iframe)
 
+                nav.switch_to.default_content()
+                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
+                    erro = 1
+
+                time.sleep(1.5)
+
                 texto_erro = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                erro = 1
+                
                 WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('R' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
@@ -1182,6 +1209,7 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
 def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
+    erro = 0
     # hora = datetime.now()
     # hora = hora.strftime("%H:%M:%S")
     # wks1.update('E' + str(i+2), hora)
@@ -1340,8 +1368,12 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
+                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
+                    erro = 1
+
+                time.sleep(1.5)
+
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('K' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
@@ -1378,6 +1410,8 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i, mortas):
     return(c)
 
 def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
+
+    erro = 0
 
     #mudando iframe
     iframes(nav)
@@ -1465,7 +1499,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).click()
         time.sleep(1)
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
-        time.sleep(1)                                                       
+        time.sleep(3)                                                       
         WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
 
         processo_texto = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/div"))).text
@@ -1479,13 +1513,15 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
         else:
             pass
 
+        time.sleep(1.5)
+
         #saindo do erro caso nao ache o processo
         try:
             nav.switch_to.default_content()
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-            time.sleep(0.5)
+            time.sleep(1.5)
             webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
-            time.sleep(0.5)
+            time.sleep(1.5)
             webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
         except:
             print('deu ruim')
@@ -1548,7 +1584,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             except:
                 print("Carregou")
 
-            time.sleep(2)
+            time.sleep(5)
 
             erro = 0
             try:
@@ -1556,8 +1592,12 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
+                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
+                    erro = 1
+
+                time.sleep(1.5)
+
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
                 wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
@@ -1594,6 +1634,8 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
     return(c)
 
 def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
+
+    erro = 0
 
     iframes(nav)
     
@@ -1732,8 +1774,12 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 # volta p janela principal (fora do iframe)
 
                 nav.switch_to.default_content()
+                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
+                    erro = 1
+
+                time.sleep(1.5)
+                
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
 
                 wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
@@ -1771,6 +1817,8 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
     return(c)
 
 def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
+
+    erro = 0
 
     #mudando iframe
     iframes(nav)
@@ -1904,10 +1952,15 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
             try:
 
                 # volta p janela principal (fora do iframe)
+                
+                nav.switch_to.default_content()
+                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
+                    erro = 1
 
+                time.sleep(1.5)
+                
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-                erro = 1
                 
                 wks1.update('J' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
@@ -1943,12 +1996,14 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
 
     return(c)
 
-def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
+def preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
+
+    erro = 0
 
     iframes(nav)
     
     #Insert
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
 
     #chave
     try:
@@ -1978,41 +2033,54 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
     iframes(nav)
 
     #data
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.CONTROL + 'a')
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.DELETE)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.CONTROL + 'a')
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.DELETE)
     time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(data)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(data)
     time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.TAB)  
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[5]/div/input"))).send_keys(Keys.TAB)  
 
     #inicio
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[6]/div/input"))).send_keys(Keys.TAB)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[6]/div/input"))).send_keys(Keys.TAB)
 
     #Fim
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[7]/div/input"))).send_keys(Keys.TAB)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[7]/div/input"))).send_keys(Keys.TAB)
 
     #pessoa
     #if c == 3:
     
     time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(pessoa)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(pessoa)
     time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(Keys.TAB)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(Keys.TAB)
 
     #else:
     #    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[8]/div/input"))).send_keys(Keys.TAB)
 
     #peça
     time.sleep(1)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(peca)
-    #WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.TAB)
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/div"))).click()
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(peca)
+    time.sleep(1)
+    WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.TAB)
 
+    try:
+        if WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div/div/form/table"))):
+            WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.ENTER)
+            time.sleep(1)
+            #WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.ENTER)
+            time.sleep(1)
+        else:
+            #WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[10]/div/input"))).send_keys(Keys.TAB)
+            time.sleep(1)
+            WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).click()
+    except:
+        pass
+                                                                    
     try:
         time.sleep(2)
         nav.switch_to.default_content()
         time.sleep(1.5)
-        WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+        WebDriverWait(nav, 2).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
         time.sleep(1.5)
         webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
         time.sleep(1.5)
@@ -2083,15 +2151,79 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
             try:
 
                 # volta p janela principal (fora do iframe)
-
+                
                 nav.switch_to.default_content()
+                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
+                    erro = 1
+
+                time.sleep(1.5)
+                
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
-                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
 
                 wks1.update('T' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
+
+                # iframes(nav)
+
+                # campo1 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/div'))).text
+                # campo1 = campo1[:6]
+
+                # campo2 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[5]/td[9]/div/div'))).text
+                # campo2 = campo2[:6]
+    
+                # try:
+                #     campo3 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[7]/td[9]/div/div'))).text
+                #     campo3 = campo3[:6]
+                # except:
+                #     pass
+                
+                # #TIPOS DE TINTA#
+
+                # sheet = 'BANCO DE DADOS ÚNICO - PINTURA'
+                # worksheet1 = 'TIPOS DE TINTA'
+
+                # sa = gspread.service_account(filename)
+                # sh = sa.open(sheet)
+
+                # wks1 = sh.worksheet(worksheet1)
+
+                # base = wks1.get()
+                # base = pd.DataFrame(base)
+                # #base = base.iloc
+
+                # headers = wks1.row_values(1)#[0:3] 
+                
+                # base = base.set_axis(headers, axis=1, inplace=False)
+                
+                # ################
+
+                # index = base[base['CODIGO'] == campo1].index[0]
+                
+                # tipo_innovaro = base[base['CODIGO'] == campo1]['TIPO'][index] 
+
+                
+
+                # if tipo != tipo_innovaro:    
+                #     base_tipo = base[base['TIPO'] == tipo]
+                #     codigo_certo = base_tipo[base_tipo['COR'] == cor].index[0]
+                #     codigo_certo = base['CODIGO'][codigo_certo]
+
+                #     if tipo == 'PU':
+                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/div'))).click()
+                #         time.sleep(1)
+                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/input'))).send_keys(Keys.CONTROL + 'a')
+                #         time.sleep(1)
+                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/input'))).send_keys(Keys.DELETE)
+
+                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/input'))).send_keys(codigo_certo)
+
+
+
+
+
+
 
                 nav.switch_to.default_content()
 
@@ -2116,6 +2248,10 @@ def preenchendo_pintura(data, pessoa, peca, qtde, wks1, c, i):
                 wks1.update('O' + str(i+1), 'OK ROBS - ' + data_hoje() + ' ' + hora_atual())
                 print('deu bom')
                 c = c + 2
+
+            time.sleep(2)
+
+
 
             print(c)
             time.sleep(1.5)
@@ -2572,22 +2708,23 @@ while True:
                                     c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i) 
                                     time.sleep(1.5)           
                                     print("c: ", c)
-                                    j = 0
-
-                                    for j in range(len(transferidas)):
-                                        try:
-                                            filtrado = transferidas.loc[transferidas.MATERIAL == peca]
-                                            ok = filtrado['index'][j]
-                                            wks1.update("T" + str(ok+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
-                                            time.sleep(1.5)
-                                        except:
-                                            pass
                                 except:
                                     pass
 
                             time.sleep(1.5)
                             try:
                                 selecionar_todos(nav)
+
+                                time.sleep(1.5)
+
+                                for j in range(len(transferidas)):
+                                    try:
+                                        linha_transferida = base_filtrada['index'][j]
+                                        wks1.update("T" + str(linha_transferida+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
+                                        time.sleep(1.5)
+                                    except:
+                                        pass
+
                             except:
                                 pass
 
@@ -2637,24 +2774,24 @@ while True:
                             c = preenchendo_corte_transf(data,peca,qtde,wks1,c,i)   
                             time.sleep(1.5)         
                             print("c: ", c)
-                            j = 0
-
-                            for j in range(len(base)):
-                                try:
-                                    filtrado = base.loc[base['Código Chapa'] == peca]
-                                    filtrado = filtrado.loc[filtrado.Data == data]
-                                    filtrado = filtrado.loc[filtrado.Status == '']
-                                    filtrado = filtrado.reset_index()
-                                    ok = filtrado['index'][j]
-                                    wks1.update("L" + str(ok+1), 'OK ROBS ' + data_hoje() + ' ' + hora_atual()) 
-                                    time.sleep(1.5)
-                                except:
-                                    pass
                         except:
                             pass
+
                     time.sleep(1.5)
+                   
                     try:
                         selecionar_todos(nav)
+                        
+                        time.sleep(1.5)
+
+                        for j in range(len(base_filtrada)):
+                            try:
+                                linha_transferida = base_filtrada['index'][j]
+                                wks1.update("L" + str(linha_transferida+1), 'OK ROBS ' + data_hoje() + ' ' + hora_atual()) 
+                                time.sleep(1.5)
+                            except:
+                                pass
+
                     except:
                         pass
 
@@ -2700,6 +2837,8 @@ while True:
                             c = preenchendo_serra(data,pessoa,peca,qtde,wks1,c,i,mortas)
                             time.sleep(1.5)
                             print("c: ", c)
+                            if c == 23:
+                                c = 21
                         except:
                             pass
 
@@ -2740,6 +2879,9 @@ while True:
                             c = preenchendo_usinagem(data,pessoa,peca,qtde,wks1,c,i, mortas)
                             time.sleep(1.5)
                             print("c: ", c)
+                            if c == 23:
+                                c = 21
+                        
                         except:
                             pass
 
@@ -2825,6 +2967,8 @@ while True:
                             c = preenchendo_estamparia(data,pessoa,peca,qtde,wks1,c,i)
                             time.sleep(1.5)
                             print("c: ", c)
+                            if c == 23:
+                                c = 21                            
                         except:
                             pass
 
@@ -2863,6 +3007,8 @@ while True:
                             c = preenchendo_montagem(data,pessoa,peca,qtde,wks1,c,i)
                             time.sleep(1.5)
                             print("c: ", c)
+                            if c == 23:
+                                c = 21                            
                         except:
                             pass
                 
@@ -2897,11 +3043,15 @@ while True:
                             peca = base_filtrada['CÓDIGO'][i]
                             qtde = str(base_filtrada['Qtd'][i])
                             data = base_filtrada['Carimbo'][i]
+                            tipo = base_filtrada['Tipo'][i]
+                            cor = base_filtrada['Cor'][i]
                             pessoa = pessoa
-                            print(peca, ', ',qtde, ', ',data, ', ',pessoa)
-                            c = preenchendo_pintura(data,pessoa,peca,qtde,wks1,c,i)
+                            print(peca, '', '',qtde, '', '',data, '', '',pessoa)
+                            c = preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i)
                             time.sleep(1.5)
                             print("c: ", c)
+                            if c == 23:
+                                c = 21                            
                         except:
                             pass
 
