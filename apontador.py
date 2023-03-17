@@ -334,6 +334,8 @@ def planilha_serra_transf(data, filename):
 
     base_filtrada = base_filtrada.loc[base_filtrada['PESO BARRAS'] > 0].reset_index(drop=True)
 
+    teste = pd.DataFrame(base_filtrada.groupby(base_filtrada['MATERIAL']).sum()).drop(columns=['index'])
+
     return(wks1, base, base_filtrada, transferidas)
 
 def planilha_corte_transf(data, filename):
@@ -2697,7 +2699,36 @@ while True:
                 if not len(df_final) == 0:
 
                     if not int(len(transferidas)) == 0:
+                            
+                            df_final['comparar2'] = ''
+                            
+                            for saldo in range(len(df_final)):
+                                
+                                try:
+                                    if df_final['MATERIAL'][saldo] == df_final['MATERIAL'][saldo-1]:
+                                        df_final['comparar2'][saldo] = df_final['comparar2'][saldo-1] - df_final['PESO BARRAS'][saldo]
+                                    
+                                        if df_final['comparar2'][saldo] >= df_final['PESO BARRAS'][saldo]:
+                                            df_final['comparar'][saldo] = 'True'
+                                        else:
+                                            df_final['comparar'][saldo] = 'False'
+                                    else:
+                                        df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['PESO BARRAS'][saldo]
+                                        
+                                        if df_final['comparar2'][saldo] >= df_final['PESO BARRAS'][saldo]:
+                                            df_final['comparar'][saldo] = 'True'
+                                        else:
+                                            df_final['comparar'][saldo] = 'False'
+                                except:
+                                    df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['PESO BARRAS'][saldo]
+                                    
+                                    if df_final['comparar2'][saldo] >= df_final['PESO BARRAS'][saldo]:
+                                        df_final['comparar'][saldo] = 'True'
+                                    else:
+                                        df_final['comparar'][saldo] = 'False'
 
+                            df_final = df_final[df_final['comparar'] == 'True']
+                            
                             for i in range(len(base)+1): # serra
 
                                 print("i: ", i)
@@ -2717,9 +2748,9 @@ while True:
 
                                 time.sleep(1.5)
 
-                                for j in range(len(transferidas)):
+                                for j in range(len(df_final)):
                                     try:
-                                        linha_transferida = base_filtrada['index'][j]
+                                        linha_transferida = df_final['index'][j]
                                         wks1.update("T" + str(linha_transferida+1), 'OK TRANSF - ' + data_hoje() + ' ' + hora_atual()) 
                                         time.sleep(1.5)
                                     except:
@@ -2764,8 +2795,36 @@ while True:
 
                 if not len(df_final) == 0:
 
-                    for i in range(len(base)+1): # serra
+                    df_final['comparar2'] = ''
+                        
+                    for saldo in range(len(df_final)):
+                        
+                        try:
+                            if df_final['Código Chapa'][saldo] == df_final['Código Chapa'][saldo-1]:
+                                df_final['comparar2'][saldo] = df_final['comparar2'][saldo-1] - df_final['Peso'][saldo]
+                            
+                                if df_final['comparar2'][saldo] >= df_final['Peso'][saldo]:
+                                    df_final['comparar'][saldo] = 'True'
+                                else:
+                                    df_final['comparar'][saldo] = 'False'
+                            else:
+                                df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['Peso'][saldo]
+                                
+                                if df_final['comparar2'][saldo] >= df_final['Peso'][saldo]:
+                                    df_final['comparar'][saldo] = 'True'
+                                else:
+                                    df_final['comparar'][saldo] = 'False'
+                        except:
+                            df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['Peso'][saldo]
+                            
+                            if df_final['comparar2'][saldo] >= df_final['Peso'][saldo]:
+                                df_final['comparar'][saldo] = 'True'
+                            else:
+                                df_final['comparar'][saldo] = 'False'
 
+                    df_final = df_final[df_final['comparar'] == 'True']
+                    
+                    for i in range(len(df_final)+1):
                         print("i: ", i)
                         try:
                             peca = df_final['Código Chapa'][i]
@@ -2784,9 +2843,9 @@ while True:
                         
                         time.sleep(1.5)
 
-                        for j in range(len(base_filtrada)):
+                        for j in range(len(df_final)):
                             try:
-                                linha_transferida = base_filtrada['index'][j]
+                                linha_transferida = df_final['index'][j]
                                 wks1.update("L" + str(linha_transferida+1), 'OK ROBS ' + data_hoje() + ' ' + hora_atual()) 
                                 time.sleep(1.5)
                             except:
