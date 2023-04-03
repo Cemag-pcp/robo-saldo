@@ -9,6 +9,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import gspread
 import chromedriver_autoinstaller
+import warnings
+
+warnings.filterwarnings("ignore")
 
 #chromedriver_autoinstaller.install()
 
