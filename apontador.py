@@ -70,7 +70,7 @@ def acessar_innovaro():
     #link1 = "http://192.168.3.141/"
     link1 = 'http://cemag.innovaro.com.br/sistema'
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-    nav = webdriver.Chrome()#chrome_options=options)
+    nav = webdriver.Chrome(chrome_options=options)
     nav.maximize_window()
     time.sleep(2)
     nav.get(link1)
@@ -765,11 +765,11 @@ def planilha_pintura(data, filename):
     base_filtrada['CÓDIGO'] = base_filtrada['CÓDIGO'].replace(' ','_', regex=True)
     base_filtrada['n_underscore'] = base_filtrada['CÓDIGO'].str.find('_')
     
-    for i in range(len(base)+5):
-        try:
-            base_filtrada['CÓDIGO'][i] = base_filtrada['CÓDIGO'][i][:base_filtrada['n_underscore'][i]]
-        except:
-            pass
+    # for i in range(len(base)+5):
+    #     try:
+    #         base_filtrada['CÓDIGO'][i] = base_filtrada['CÓDIGO'][i][:base_filtrada['n_underscore'][i]]
+    #     except:
+    #         pass
 
     base_filtrada = base_filtrada[['Carimbo','CÓDIGO','Qtd', 'Tipo','Cor','CONSUMO PU','CONSUMO PÓ','CATALISADOR']]
 
@@ -1501,7 +1501,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).click()
         time.sleep(1)
         WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
-        time.sleep(3)                                                       
+        time.sleep(4)                                                       
         WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
 
         processo_texto = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/div"))).text
@@ -1510,7 +1510,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/div"))).click()
             time.sleep(1)                                                                   
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys('S')
-            time.sleep(1)                                                       
+            time.sleep(4)                                                       
             WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[12]/div/input"))).send_keys(Keys.TAB)
         else:
             pass
@@ -1520,10 +1520,11 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
         #saindo do erro caso nao ache o processo
         try:
             nav.switch_to.default_content()
+            time.sleep(2)
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-            time.sleep(1.5)
+            time.sleep(2)
             webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
-            time.sleep(1.5)
+            time.sleep(2)
             webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
         except:
             print('deu ruim')
@@ -1554,9 +1555,6 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
-
-            # #branco
-            # WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)
 
             if mortas != '':
 
@@ -2406,22 +2404,28 @@ def consulta_saldo(data, nav):
                     tabelona['Saldo'][i] = tabelona['Saldo'][i].replace(',','')
                     tabelona['Saldo'][i] = tabelona['Saldo'][i].replace('.','')
 
-            try:
-                for j in range(len(tabelona)):
-                    if tabelona['Saldo'][j][:1] == '0' :
-                        tabelona['Saldo'][j] = tabelona['Saldo'][j][:1] + '.' + tabelona['Saldo'][j][1:3]
+            for saldo in range(len(tabelona)):
+                try:
+                    tabelona['Saldo'][saldo] = tabelona['Saldo'][saldo][:len(tabelona['Saldo'][saldo])-4] + "." + tabelona['Saldo'][saldo][-4:]  
+                except:
+                    pass
 
-            except:
-                pass
+            # try:
+            #     for j in range(len(tabelona)):
+            #         if tabelona['Saldo'][j][:1] == '0' :
+            #             tabelona['Saldo'][j] = tabelona['Saldo'][j][:1] + '.' + tabelona['Saldo'][j][1:3]
+
+            # except:
+            #     pass
 
 
-            try:
-                for j in range(len(tabelona)):
-                    if len(tabelona['Saldo'][j]) >= 6 :
-                        tabelona['Saldo'][j] = float(tabelona['Saldo'][j]) / 10000
+            # try:
+            #     for j in range(len(tabelona)):
+            #         if len(tabelona['Saldo'][j]) >= 6 :
+            #             tabelona['Saldo'][j] = float(tabelona['Saldo'][j]) / 10000
 
-            except:
-                pass
+            # except:
+            #     pass
 
             tabelona['Saldo'] = tabelona['Saldo'].astype(float)
 
@@ -2644,7 +2648,7 @@ while True:
         
         else:
 
-            datas = [data_hoje(), data_sabado(), data_sexta()]
+            datas = [data_hoje(), data_ontem(), data_sabado(), data_sexta()]
 
         nav = acessar_innovaro()
 
@@ -2659,7 +2663,7 @@ while True:
                 time.sleep(3)
 
                 data = datas[d]
-                #data = data_hoje()
+                #data = data_ontem()
                 #data = '01/02/2023'
                 
                 ########## CONSULTAR SALDO ###########
@@ -2673,7 +2677,8 @@ while True:
                 time.sleep(2)
 
                 df_final = consulta_saldo(data, nav)
-
+                df_final.reset_index(drop=True, inplace=True)
+                
                 time.sleep(2)
 
                 fechar_menu_consulta(nav)
@@ -2700,8 +2705,9 @@ while True:
 
                     if not int(len(transferidas)) == 0:
                             
+                            df_final = df_final.reset_index(drop=True)
                             df_final['comparar2'] = ''
-                            
+
                             for saldo in range(len(df_final)):
                                 
                                 try:
@@ -2715,14 +2721,14 @@ while True:
                                     else:
                                         df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['PESO BARRAS'][saldo]
                                         
-                                        if df_final['comparar2'][saldo] >= df_final['PESO BARRAS'][saldo]:
+                                        if df_final['Saldo'][saldo] >= df_final['PESO BARRAS'][saldo]:
                                             df_final['comparar'][saldo] = 'True'
                                         else:
                                             df_final['comparar'][saldo] = 'False'
                                 except:
                                     df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['PESO BARRAS'][saldo]
                                     
-                                    if df_final['comparar2'][saldo] >= df_final['PESO BARRAS'][saldo]:
+                                    if df_final['Saldo'][saldo] >= df_final['PESO BARRAS'][saldo]:
                                         df_final['comparar'][saldo] = 'True'
                                     else:
                                         df_final['comparar'][saldo] = 'False'
@@ -2739,6 +2745,10 @@ while True:
                                     c = preenchendo_serra_transf(data,peca,qtde,wks1,c,i) 
                                     time.sleep(1.5)           
                                     print("c: ", c)
+
+                                    if c == 23:
+                                        c = 21           
+
                                 except:
                                     pass
 
@@ -2776,7 +2786,8 @@ while True:
                 time.sleep(1)
 
                 df_final = consulta_saldo_chapas(data, nav)
-
+                df_final.reset_index(drop=True, inplace=True)
+                
                 time.sleep(2)
 
                 fechar_menu_consulta(nav)
@@ -2790,6 +2801,8 @@ while True:
                 i = 0
 
                 menu_transf(nav)
+
+                time.sleep(2)
 
                 wks1, base, base_filtrada = planilha_corte_transf(data, filename)
 
@@ -2810,14 +2823,14 @@ while True:
                             else:
                                 df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['Peso'][saldo]
                                 
-                                if df_final['comparar2'][saldo] >= df_final['Peso'][saldo]:
+                                if df_final['Saldo'][saldo] >= df_final['Peso'][saldo]:
                                     df_final['comparar'][saldo] = 'True'
                                 else:
                                     df_final['comparar'][saldo] = 'False'
                         except:
                             df_final['comparar2'][saldo] = df_final['Saldo'][saldo] - df_final['Peso'][saldo]
                             
-                            if df_final['comparar2'][saldo] >= df_final['Peso'][saldo]:
+                            if df_final['Saldo'][saldo] >= df_final['Peso'][saldo]:
                                 df_final['comparar'][saldo] = 'True'
                             else:
                                 df_final['comparar'][saldo] = 'False'
@@ -2833,6 +2846,10 @@ while True:
                             c = preenchendo_corte_transf(data,peca,qtde,wks1,c,i)   
                             time.sleep(1.5)         
                             print("c: ", c)
+
+                            if c == 23:
+                                c = 21
+
                         except:
                             pass
 

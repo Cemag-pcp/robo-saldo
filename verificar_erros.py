@@ -608,7 +608,7 @@ def planilha_pintura(data, filename):
 
 #### inicio ####
 
-data = data_hoje()
+data = data_ontem()
 
 nav = acessar_innovaro()
 
