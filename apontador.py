@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import gspread
-import chromedriver_autoinstaller
+#import chromedriver_autoinstaller
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -67,13 +67,13 @@ def hora_atual():
 
 def acessar_innovaro():
     
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
+    # options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
     
-    #link1 = "http://192.168.3.141/"
-    link1 = 'http://cemag.innovaro.com.br/sistema'
+    link1 = "http://192.168.3.141/"
+    #link1 = 'http://cemag.innovaro.com.br/sistema'
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-    nav = webdriver.Chrome(chrome_options=options)
+    nav = webdriver.Chrome()#chrome_options=options)
     nav.maximize_window()
     time.sleep(2)
     nav.get(link1)
@@ -1130,14 +1130,16 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
 
             qtd_corfirmar = WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).text
             
-            time.sleep(1.5)
+            time.sleep(2)
 
             if qtd_corfirmar=="":
+                print("Quantidade vazia")
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
                 time.sleep(2)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
+                print("Quantidade preenchida")
 
             if mortas != '':
 
@@ -1171,8 +1173,10 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
             erro = 0
             try:
                 # volta p janela principal (fora do iframe)
-
+                
+                time.sleep(1)
                 nav.switch_to.default_content()
+                time.sleep(1)
                 if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
                     erro = 1
 
@@ -1334,7 +1338,7 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i, mortas):
             if qtd_corfirmar=="":
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
                 time.sleep(2)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
@@ -1555,7 +1559,7 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
             if qtd_corfirmar=="":
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
                 time.sleep(2)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
@@ -1752,7 +1756,7 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
             if qtd_corfirmar=="":
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
                 time.sleep(2)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
@@ -1933,7 +1937,7 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
             if qtd_corfirmar=="":
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
                 time.sleep(2)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
@@ -2131,7 +2135,7 @@ def preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
             if qtd_corfirmar=="":
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div"))).click()    
                 time.sleep(2)
-                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtd_corfirmar)    
+                WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(qtde)    
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
@@ -2144,7 +2148,7 @@ def preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
             nav.switch_to.default_content()
 
             try:
-                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                while WebDriverWait(nav, 0.5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
                     print("Carregando")
             except:
                 print("Carregou")
@@ -2167,66 +2171,6 @@ def preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
                 wks1.update('T' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
-
-                # iframes(nav)
-
-                # campo1 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/div'))).text
-                # campo1 = campo1[:6]
-
-                # campo2 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[5]/td[9]/div/div'))).text
-                # campo2 = campo2[:6]
-    
-                # try:
-                #     campo3 = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[7]/td[9]/div/div'))).text
-                #     campo3 = campo3[:6]
-                # except:
-                #     pass
-                
-                # #TIPOS DE TINTA#
-
-                # sheet = 'BANCO DE DADOS ÚNICO - PINTURA'
-                # worksheet1 = 'TIPOS DE TINTA'
-
-                # sa = gspread.service_account(filename)
-                # sh = sa.open(sheet)
-
-                # wks1 = sh.worksheet(worksheet1)
-
-                # base = wks1.get()
-                # base = pd.DataFrame(base)
-                # #base = base.iloc
-
-                # headers = wks1.row_values(1)#[0:3] 
-                
-                # base = base.set_axis(headers, axis=1, inplace=False)
-                
-                # ################
-
-                # index = base[base['CODIGO'] == campo1].index[0]
-                
-                # tipo_innovaro = base[base['CODIGO'] == campo1]['TIPO'][index] 
-
-                
-
-                # if tipo != tipo_innovaro:    
-                #     base_tipo = base[base['TIPO'] == tipo]
-                #     codigo_certo = base_tipo[base_tipo['COR'] == cor].index[0]
-                #     codigo_certo = base['CODIGO'][codigo_certo]
-
-                #     if tipo == 'PU':
-                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/div'))).click()
-                #         time.sleep(1)
-                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/input'))).send_keys(Keys.CONTROL + 'a')
-                #         time.sleep(1)
-                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/input'))).send_keys(Keys.DELETE)
-
-                #         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[3]/td[9]/div/input'))).send_keys(codigo_certo)
-
-
-
-
-
-
 
                 nav.switch_to.default_content()
 
@@ -2669,7 +2613,7 @@ while True:
                 #data = data_ontem()
                 #data = '01/02/2023'
                 
-                ########## CONSULTAR SALDO ###########
+                ######### CONSULTAR SALDO ###########
                 
                 menu_innovaro(nav)
 
