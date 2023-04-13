@@ -749,6 +749,8 @@ def planilha_pintura(data, filename):
 
     headers = wks1.row_values(5)#[0:3]
 
+    base = base.iloc[0:,0:24]
+
     base = base.set_axis(headers, axis=1, inplace=False)[5:]
 
     ########### Tratando planilhas ###########
@@ -1172,19 +1174,23 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
             time.sleep(2)
             erro = 0
             try:
-                # volta p janela principal (fora do iframe)
                 
+                # volta p janela principal (fora do iframe)
                 time.sleep(1)
                 nav.switch_to.default_content()
-                time.sleep(1)
-                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
-                    erro = 1
-
-                time.sleep(1.5)
-
-                texto_erro = WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
                 
-                WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+                time.sleep(5)
+                
+                texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                erro = 1
+                WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+
+                time.sleep(1)
+                webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
+                time.sleep(1.5)
+                webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
+                time.sleep(1)
+                                
                 wks1.update('R' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
                 
@@ -1204,12 +1210,10 @@ def preenchendo_serra(data, pessoa, peca, qtde, wks1, c, i, mortas):
                                 
                 c = 3
             except:
-                pass
-
-            if erro == 0:
-                wks1.update('S' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
-                print('deu bom')
-                c = c + 2
+                if erro == 0:
+                    wks1.update('S' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
+                    print('deu bom')
+                    c = c + 2
 
             print(c)
             time.sleep(1.5)
@@ -1376,14 +1380,21 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i, mortas):
             try:
                 # volta p janela principal (fora do iframe)
 
+                time.sleep(1)
                 nav.switch_to.default_content()
-                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
-                    erro = 1
-
-                time.sleep(1.5)
-
+                
+                time.sleep(5)
+                
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+
+                time.sleep(1)
+                webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
+                time.sleep(1.5)
+                webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
+                time.sleep(1)
+                
                 wks1.update('K' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
@@ -1405,13 +1416,10 @@ def preenchendo_usinagem(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 c = 3
 
             except:
-                pass
-
-            if erro == 0:
-            
-                wks1.update('J' + str(i+1), 'OK ROBINHO - ' + ' ' + data_hoje() + ' ' + hora_atual())
-                print('deu bom')
-                c = c + 2
+                if erro == 0:
+                    wks1.update('J' + str(i+1), 'OK ROBINHO - ' + ' ' + data_hoje() + ' ' + hora_atual())
+                    print('deu bom')
+                    c = c + 2
 
             print(c)
             time.sleep(1.5)
@@ -1592,20 +1600,26 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 print("Carregou")
 
             time.sleep(5)
-
             erro = 0
+
             try:
 
                 # volta p janela principal (fora do iframe)
-
+                time.sleep(1)
                 nav.switch_to.default_content()
-                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
-                    erro = 1
-
-                time.sleep(1.5)
-
+                
+                time.sleep(5)
+                
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+
+                time.sleep(1)
+                webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
+                time.sleep(1.5)
+                webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
+                time.sleep(1)
+                
                 wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
                 time.sleep(2)
@@ -1627,12 +1641,10 @@ def preenchendo_corte(data, pessoa, peca, qtde, wks1, c, i, mortas):
                 time.sleep(1.5)
 
             except:
-                pass
-
-            if erro == 0:
-                wks1.update('L' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
-                print('deu bom')
-                c = c + 2
+                if erro == 0:
+                    wks1.update('L' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
+                    print('deu bom')
+                    c = c + 2
 
             print(c)
             time.sleep(1.5)
@@ -1776,18 +1788,24 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
 
             time.sleep(2)
             erro = 0
+
             try:
 
                 # volta p janela principal (fora do iframe)
-
+                time.sleep(1)
                 nav.switch_to.default_content()
-                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
-                    erro = 1
-
-                time.sleep(1.5)
+                
+                time.sleep(5)
                 
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+
+                time.sleep(1)
+                webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
+                time.sleep(1.5)
+                webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
+                time.sleep(1)
 
                 wks1.update('O' + str(i+1), texto_erro + ' ' + data_hoje() + ' ' + hora_atual())
 
@@ -1810,12 +1828,11 @@ def preenchendo_estamparia(data, pessoa, peca, qtde, wks1, c, i):
                 c = 3
 
             except:
-                pass
-
-            if erro == 0:
-                wks1.update('N' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
-                print('deu bom')
-                c = c + 2
+                
+                if erro == 0:
+                    wks1.update('N' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
+                    print('deu bom')
+                    c = c + 2
 
             print(c)
             time.sleep(1.5)
@@ -1948,8 +1965,9 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
             
             nav.switch_to.default_content()
+            
             try:
-                while WebDriverWait(nav, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                while WebDriverWait(nav, 5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
                     print("Carregando")
             except:
                 print("Carregou")
@@ -1961,14 +1979,17 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
                 # volta p janela principal (fora do iframe)
                 
                 nav.switch_to.default_content()
-                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
-                    erro = 1
-
-                time.sleep(1.5)
+                time.sleep(5)
                 
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
-                
+
+                time.sleep(1)
+                webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
+                time.sleep(1.5)
+                webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
+                time.sleep(1)
                 wks1.update('J' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
                 time.sleep(2)
 
@@ -1989,12 +2010,10 @@ def preenchendo_montagem(data, pessoa, peca, qtde, wks1, c, i):
                 c = 3
 
             except:
-                pass
-
-            if erro == 0:
-                wks1.update('I' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
-                print('deu bom')
-                c = c + 2
+                if erro == 0:
+                    wks1.update('I' + str(i+1), 'OK ROBINHO - ' + data_hoje() + ' ' + hora_atual())
+                    print('deu bom')
+                    c = c + 2
 
             time.sleep(1.5)
             print(c)
@@ -2139,34 +2158,41 @@ def preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
                 time.sleep(2)
                 WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[" + str(c) + "]/td[18]/div/input"))).send_keys(Keys.TAB)    
 
+
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[8]"))).click()
 
             time.sleep(1)
-
+            
             WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div"))).click()
 
             nav.switch_to.default_content()
 
             try:
-                while WebDriverWait(nav, 0.5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
+                while WebDriverWait(nav, 5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
                     print("Carregando")
             except:
                 print("Carregou")
-
-            time.sleep(2)
+            
+            time.sleep(5)
             erro = 0
+
             try:
-
-                # volta p janela principal (fora do iframe)
                 
+                # volta p janela principal (fora do iframe)
+                time.sleep(1)
                 nav.switch_to.default_content()
-                if WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))):
-                    erro = 1
-
-                time.sleep(1.5)
+                
+                time.sleep(5)
                 
                 texto_erro = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[10]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                erro = 1
                 WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="confirm"]'))).click()
+
+                time.sleep(1)
+                webdriver.ActionChains(nav).send_keys(Keys.ESCAPE).perform()
+                time.sleep(1.5)
+                webdriver.ActionChains(nav).send_keys(Keys.ENTER).perform()
+                time.sleep(1)
 
                 wks1.update('T' + str(i+1), texto_erro + '' + data_hoje() + ' ' + hora_atual())
 
@@ -2189,18 +2215,16 @@ def preenchendo_pintura(data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
                 c = 3
 
             except:
-                pass
-
-            if erro == 0:
-                wks1.update('O' + str(i+1), 'OK ROBS - ' + data_hoje() + ' ' + hora_atual())
-                print('deu bom')
-                c = c + 2
+                
+                if erro == 0:
+                    wks1.update('O' + str(i+1), 'OK ROBS - ' + data_hoje() + ' ' + hora_atual())
+                    print('deu bom')
+                    c = c + 2
 
             time.sleep(2)
 
-
-
             print(c)
+            print(erro)
             time.sleep(1.5)
 
     return(c)
@@ -2331,9 +2355,10 @@ def consulta_saldo(data, nav):
             tabelona = tabelona[0]
             tabelona = tabelona.droplevel(level=0,axis=1)
             tabelona = tabelona.droplevel(level=0,axis=1)
-            tabelona = tabelona[['Código','Saldo']]
+
+            tabelona = tabelona[['Unid. Medida','Saldo']]
             #tabelona = tabelona[['Unnamed: 0_level_2','Saldo']]
-            #tabelona['Saldo'] = tabelona.Saldo.shift(-1)
+            tabelona['Saldo'] = tabelona.Saldo.shift(-2)
             tabelona = tabelona.dropna()
             tabelona = tabelona.reset_index(drop=True)
             
@@ -2377,7 +2402,10 @@ def consulta_saldo(data, nav):
             tabelona['Saldo'] = tabelona['Saldo'].astype(float)
 
             #tabelona = tabelona.rename(columns={'Unnamed: 0_level_2':'MATERIAL'})
-            tabelona = tabelona.rename(columns={'Código':'MATERIAL'})
+            tabelona = tabelona.rename(columns={'Unid. Medida':'MATERIAL'})
+
+            for i in range(len(tabelona)):
+                tabelona['MATERIAL'][i] = tabelona['MATERIAL'][i][:len(tabelona['MATERIAL'][i]) - 5]
             
             df_final = pd.merge(tabelona,base_filtrada,on='MATERIAL')
             
@@ -2504,9 +2532,9 @@ def consulta_saldo_chapas(data, nav):
             tabelona = tabelona[0]
             tabelona = tabelona.droplevel(level=0,axis=1)
             tabelona = tabelona.droplevel(level=0,axis=1)
-            tabelona = tabelona[['Código','Saldo']]
+            tabelona = tabelona[['Unid. Medida','Saldo']]
             #tabelona = tabelona[['Unnamed: 0_level_2','Saldo']]
-            #tabelona['Saldo'] = tabelona.Saldo.shift(-1)
+            tabelona['Saldo'] = tabelona.Saldo.shift(-2)
             tabelona = tabelona.dropna()
             tabelona = tabelona.reset_index(drop=True)
             
@@ -2534,7 +2562,10 @@ def consulta_saldo_chapas(data, nav):
             tabelona['Saldo'] = tabelona['Saldo'].astype(float)
 
             #tabelona = tabelona.rename(columns={'Unnamed: 0_level_2':'MATERIAL'})
-            tabelona = tabelona.rename(columns={'Código':'Código Chapa'})
+            tabelona = tabelona.rename(columns={'Unid. Medida':'Código Chapa'})
+
+            for i in range(len(tabelona)):
+                tabelona['Código Chapa'][i] = tabelona['Código Chapa'][i][:len(tabelona['Código Chapa'][i]) - 5]
 
             df_final = pd.merge(tabelona,base_filtrada,on='Código Chapa')
             
