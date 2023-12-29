@@ -1,31 +1,39 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import pandas as pd
+import threading
 import time
-from datetime import datetime,timedelta 
-import numpy as np
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from apontador import *
 
+def executar_selenium(instancia):
+    # Configuração do WebDriver (substitua 'chrome' por 'firefox' se preferir o Firefox)
+    # driver = webdriver.Chrome(executable_path='chromedriver.exe')
 
-#options = webdriver.ChromeOptions()
-#options.add_argument("--headless")
+    # Realize as operações desejadas na instância do WebDriver
+    # driver.get(url)
 
-#link1 = "http://192.168.3.141/"
-#link1 = 'http://cemag.innovaro.com.br/sistema'
-link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-nav = webdriver.Chrome()#chrome_options=options)
-time.sleep(2)
-nav.get(link1)
+    # Exemplo: Cada instância faz algo diferente com base no número da instância
+    if instancia == 1:
+        funcao_main()
 
-try:
-    while WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="content_statusMessageBox"]'))):
-        print("carregando")
-except:
-    pass
-try:
-    WebDriverWait(nav,2).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="errorMessageBox"]')))
-    print('erro')
-except:
-    print('Funcionou')
+    elif instancia == 2:
+        funcao_transferencia()
+
+    # Aguarde um pouco para visualizar a execução
+    # time.sleep(5)
+
+    # Feche o WebDriver
+    # driver.quit()
+
+# Crie duas threads para executar o Selenium concorrentemente
+# url_instancia1 = 'https://www.exemplo1.com'
+# url_instancia2 = 'https://www.exemplo2.com'
+
+thread1 = threading.Thread(target=executar_selenium, args=(1,))
+thread2 = threading.Thread(target=executar_selenium, args=(2,))
+
+# Inicie as threads
+thread1.start()
+thread2.start()
+
+# Aguarde até que ambas as threads tenham concluído
+thread1.join()
+thread2.join()
