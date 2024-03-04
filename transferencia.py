@@ -1166,27 +1166,38 @@ def preenchendo_corte_transf(nav, data, peca, qtde, wks1, c, i):
     return(c)
 
 def selecionar_todos(nav,data):
-    
-    print("teste")
 
-    # iframes(nav)
+    iframes(nav)
 
     #selecinar todos os campos
     time.sleep(2)
     WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[1]/td[1]/div'))).click()
-    
+
     #aprovar
-    WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[1]/span[2]/p'))).click()
-    time.sleep(1)
-    
+    # iframes(nav)
+    # button_aprovar = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[1]/span[2]/p')))
+    # time.sleep(1)
+    # button_aprovar.send_keys(Keys.CONTROL, Keys.SHIFT + 'r')
+    time.sleep(2)
+    button_aprovar = WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[1]/span[2]/p')))
+    button_aprovar.click()
+
+    try:
+        WebDriverWait(nav, 10).until(lambda nav: "hover" in button_aprovar.get_attribute("class"))
+        button_aprovar.click()
+    except:
+        pass
+
+
     time.sleep(1.5)
     #fechar pop-up
     nav.switch_to.default_content()
     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.ID, 'confirm'))).click()
 
     #mudando iframe
-    # iframes(nav)
+    iframes(nav)
 
+    time.sleep(2)
     #baixar 
     WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[3]/span[2]/p'))).click()
     time.sleep(1)
@@ -3083,7 +3094,7 @@ while True:
 
                 print("Verificando saldo da serra")
 
-                wks2.update("E" + "5", 'SALDO SERRA: ' + data) 
+                wks2.update("O" + "5", 'SALDO SERRA: ' + data) 
 
                 time.sleep(2)
 
@@ -3098,7 +3109,7 @@ while True:
 
                 print("Indo para transferencia de tubos")
 
-                wks2.update("E" + "5", 'TRANSF. SERRA: ' + data) 
+                wks2.update("O" + "5", 'TRANSF. SERRA: ' + data) 
 
                 time.sleep(2)
 
@@ -3161,7 +3172,7 @@ while True:
 
                         time.sleep(1.5)
 
-                        selecionar_todos(data,nav)
+                        selecionar_todos(nav,data)
 
                         time.sleep(1.5)
 
@@ -3177,7 +3188,7 @@ while True:
 
                 print("Verificando saldo de corte")
                 
-                wks2.update("E" + "5", 'SALDO CORTE: ' + data) 
+                wks2.update("O" + "5", 'SALDO CORTE: ' + data) 
 
                 time.sleep(2)
 
@@ -3198,7 +3209,7 @@ while True:
 
                 print("indo para transferencia de chapas")
 
-                wks2.update("E" + "5", 'TRANSF. CORTE: ' + data) 
+                wks2.update("O" + "5", 'TRANSF. CORTE: ' + data) 
 
                 c = 3
 
@@ -3261,7 +3272,7 @@ while True:
 
                     time.sleep(1.5)
                     
-                    selecionar_todos(data,nav)
+                    selecionar_todos(nav,data)
                     
                     time.sleep(1.5)
 
