@@ -3301,268 +3301,219 @@ def funcao_main():
 
                     lista_ativadores = checkbox_apontamentos(filename)
 
-                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Serra']) > 0:
+                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Serra']) > 0:
 
-                    #     print('Indo para serra')
+                        print('Indo para serra')
 
-                    #     wks2.update("E" + "5", 'APONT. SERRA: ') 
+                        wks2.update("E" + "5", 'APONT. SERRA: ') 
 
-                    #     wks1, base, base_filtrada, pessoa  = planilha_serra(filename, data)
+                        wks1, base, base_filtrada, pessoa  = planilha_serra(filename, data)
 
-                    #     base_filtrada = base_filtrada.reset_index()
+                        base_filtrada = base_filtrada.reset_index()
 
-                    #     if not len(base_filtrada) == 0:
+                        if not len(base_filtrada) == 0:
                             
-                    #         time.sleep(1)
-                    #         nav.switch_to.default_content()
-                    #         menu_innovaro(nav)
-                    #         time.sleep(3)
+                            time.sleep(1)
+                            nav.switch_to.default_content()
+                            menu_innovaro(nav)
+                            time.sleep(3)
                             
-                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                    #         time.sleep(1.5)
-                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                            lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                            time.sleep(1.5)
+                            click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                             
-                    #         lista_menu[click_producao].click() ##clicando em producao
-                    #         time.sleep(1.5)
+                            lista_menu[click_producao].click() ##clicando em producao
+                            time.sleep(1.5)
                             
-                    #         c = 3
+                            c = 3
 
-                    #         i = 0
+                            i = 0
 
-                    #         for i in range(len(base_filtrada)): # serra
-                    #             print("i: ", i)
-                    #             nav.delete_all_cookies()
-                    #             try:
-                    #                 peca = base_filtrada['CÓDIGO'][i]
-                    #                 qtde = str(base_filtrada['QTD'][i])
-                    #                 data = base_filtrada['DATA'][i]
-                    #                 # mortas = base_filtrada['PEÇAS MORTA'][i]
-                    #                 pessoa = pessoa
-                    #                 linha = base_filtrada['index'][i]
-                    #                 c = preenchendo_serra(nav,data,pessoa,peca,qtde,wks1,c,linha)
-                    #                 time.sleep(1.5)
-                    #                 print("c: ", c)
-                    #                 if c == 23:
-                    #                     c = 21
+                            for i in range(len(base_filtrada)): # serra
+                                print("i: ", i)
+                                nav.delete_all_cookies()
+                                try:
+                                    peca = base_filtrada['CÓDIGO'][i]
+                                    qtde = str(base_filtrada['QTD'][i])
+                                    data = base_filtrada['DATA'][i]
+                                    # mortas = base_filtrada['PEÇAS MORTA'][i]
+                                    pessoa = pessoa
+                                    linha = base_filtrada['index'][i]
+                                    c = preenchendo_serra(nav,data,pessoa,peca,qtde,wks1,c,linha)
+                                    time.sleep(1.5)
+                                    print("c: ", c)
+                                    if c == 23:
+                                        c = 21
 
-                    #                 nav.delete_all_cookies() 
+                                    nav.delete_all_cookies() 
 
-                    #             except:
-                    #                 break
+                                except:
+                                    break
                     
-                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Usinagem']) > 0:
+                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Usinagem']) > 0:
                                 
-                    #     print('Indo para usinagem')
+                        print('Indo para usinagem')
 
-                    #     time.sleep(2)
+                        time.sleep(2)
 
-                    #     wks2.update("E" + "5", 'APONT. USINAGEM: ') 
+                        wks2.update("E" + "5", 'APONT. USINAGEM: ') 
 
-                    #     wks1, base, base_filtrada = planilha_usinagem(filename, data)
+                        wks1, base, base_filtrada = planilha_usinagem(filename, data)
                         
-                    #     base_filtrada = base_filtrada.reset_index()
+                        base_filtrada = base_filtrada.reset_index()
 
-                    #     if not len(base_filtrada) == 0:
+                        if not len(base_filtrada) == 0:
                             
-                    #         time.sleep(1)
+                            time.sleep(1)
 
-                    #         nav.switch_to.default_content()
-                    #         menu_innovaro(nav)
-                    #         time.sleep(3)
+                            nav.switch_to.default_content()
+                            menu_innovaro(nav)
+                            time.sleep(3)
                             
-                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                    #         time.sleep(1.5)
-                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                            lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                            time.sleep(1.5)
+                            click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                             
-                    #         lista_menu[click_producao].click() ##clicando em producao
-                    #         time.sleep(1.5)
+                            lista_menu[click_producao].click() ##clicando em producao
+                            time.sleep(1.5)
                             
-                    #         c = 3
+                            c = 3
 
-                    #         i = 0
+                            i = 0
 
-                    #         for i in range(len(base)+5):# usinagem
-                    #             print("i: ", i)
-                    #             nav.delete_all_cookies()
-                    #             try:
-                    #                 peca = base_filtrada['CÓDIGO'][i]
-                    #                 qtde = str(base_filtrada['QTD REALIZADA'][i])
-                    #                 data = base_filtrada['DATA'][i]
-                    #                 # mortas = base_filtrada['QNTD MORTA'][i]
-                    #                 pessoa = base_filtrada['OPERADOR'][i]
-                    #                 linha = base_filtrada['index'][i]
-                    #                 c = preenchendo_usinagem(nav,data,pessoa,peca,qtde,wks1,c,linha)
-                    #                 time.sleep(1.5)
-                    #                 print("c: ", c)
-                    #                 if c == 23:
-                    #                     c = 21
+                            for i in range(len(base)+5):# usinagem
+                                print("i: ", i)
+                                nav.delete_all_cookies()
+                                try:
+                                    peca = base_filtrada['CÓDIGO'][i]
+                                    qtde = str(base_filtrada['QTD REALIZADA'][i])
+                                    data = base_filtrada['DATA'][i]
+                                    # mortas = base_filtrada['QNTD MORTA'][i]
+                                    pessoa = base_filtrada['OPERADOR'][i]
+                                    linha = base_filtrada['index'][i]
+                                    c = preenchendo_usinagem(nav,data,pessoa,peca,qtde,wks1,c,linha)
+                                    time.sleep(1.5)
+                                    print("c: ", c)
+                                    if c == 23:
+                                        c = 21
                                     
-                    #                 nav.delete_all_cookies() 
+                                    nav.delete_all_cookies() 
                                 
-                    #             except:
-                    #                 break
+                                except:
+                                    break
 
-                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Corte']) > 0:
+                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Corte']) > 0:
 
-                    #     print('indo para corte')
+                        print('indo para corte')
 
-                    #     time.sleep(2)
+                        time.sleep(2)
 
-                    #     wks2.update("E" + "5", 'APONT. CORTE: ') 
+                        wks2.update("E" + "5", 'APONT. CORTE: ') 
 
-                    #     wks1, base, base_filtrada, pessoa  = planilha_corte(filename, data)
-                    #     base_filtrada = base_filtrada.reset_index()
+                        wks1, base, base_filtrada, pessoa  = planilha_corte(filename, data)
+                        base_filtrada = base_filtrada.reset_index()
 
-                    #     if not len(base_filtrada) == 0:
+                        if not len(base_filtrada) == 0:
                             
-                    #         time.sleep(1)
+                            time.sleep(1)
 
-                    #         nav.switch_to.default_content()
-                    #         menu_innovaro(nav)
-                    #         time.sleep(3)
+                            nav.switch_to.default_content()
+                            menu_innovaro(nav)
+                            time.sleep(3)
                             
-                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                    #         time.sleep(1.5)
-                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                            lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                            time.sleep(1.5)
+                            click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                             
-                    #         lista_menu[click_producao].click() ##clicando em producao
+                            lista_menu[click_producao].click() ##clicando em producao
 
-                    #         time.sleep(1.5)
+                            time.sleep(1.5)
                             
-                    #         c = 3
+                            c = 3
 
-                    #         i = 1
+                            i = 1
 
-                    #         for i in range(len(base)+5):
-                    #             nav.delete_all_cookies()
-                    #             print("i: ", i)
-                    #             try:
-                    #                 peca = base_filtrada['Peça'][i]
-                    #                 qtde = str(base_filtrada['Total Prod.'][i])
-                    #                 data = base_filtrada['Data finalização'][i]
-                    #                 mortas = base_filtrada['Mortas'][i]
-                    #                 pessoa = pessoa
-                    #                 linha = base_filtrada['index'][i]
-                    #                 c = preenchendo_corte(nav,data,pessoa,peca,qtde,wks1,c,linha, mortas)
-                    #                 time.sleep(1.5)
-                    #                 print("c: ", c)
+                            for i in range(len(base)+5):
+                                nav.delete_all_cookies()
+                                print("i: ", i)
+                                try:
+                                    peca = base_filtrada['Peça'][i]
+                                    qtde = str(base_filtrada['Total Prod.'][i])
+                                    data = base_filtrada['Data finalização'][i]
+                                    mortas = base_filtrada['Mortas'][i]
+                                    pessoa = pessoa
+                                    linha = base_filtrada['index'][i]
+                                    c = preenchendo_corte(nav,data,pessoa,peca,qtde,wks1,c,linha, mortas)
+                                    time.sleep(1.5)
+                                    print("c: ", c)
                                     
-                    #                 if c == 23:
-                    #                     c = 21
+                                    if c == 23:
+                                        c = 21
                                     
-                    #                 nav.delete_all_cookies() 
+                                    nav.delete_all_cookies() 
 
-                    #             except:
-                    #                 break
+                                except:
+                                    break
 
-                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Estamparia']) > 0:
+                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Estamparia']) > 0:
 
-                    #     print('Indo para estamparia')
+                        print('Indo para estamparia')
 
-                    #     time.sleep(2)
+                        time.sleep(2)
 
-                    #     wks2.update("E" + "5", 'APONT. ESTAMPARIA: ') 
+                        wks2.update("E" + "5", 'APONT. ESTAMPARIA: ') 
 
-                    #     wks1, base, base_filtrada = planilha_estamparia(filename, data)
-                    #     base_filtrada = base_filtrada.reset_index()
+                        wks1, base, base_filtrada = planilha_estamparia(filename, data)
+                        base_filtrada = base_filtrada.reset_index()
                         
-                    #     if not len(base_filtrada) == 0:
+                        if not len(base_filtrada) == 0:
                             
-                    #         time.sleep(1)
+                            time.sleep(1)
 
-                    #         nav.switch_to.default_content()
-                    #         menu_innovaro(nav)
-                    #         time.sleep(3)
+                            nav.switch_to.default_content()
+                            menu_innovaro(nav)
+                            time.sleep(3)
                             
-                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                    #         time.sleep(1.5)
-                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                            lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                            time.sleep(1.5)
+                            click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                             
-                    #         lista_menu[click_producao].click() ##clicando em producao
-                    #         time.sleep(1.5)
+                            lista_menu[click_producao].click() ##clicando em producao
+                            time.sleep(1.5)
                             
-                    #         c = 3
+                            c = 3
 
-                    #         i = 0
+                            i = 0
 
-                    #         for i in range(len(base_filtrada)):
-                    #             nav.delete_all_cookies()
-                    #             print("i: ", i)
-                    #             try:
-                    #                 peca = base_filtrada['CÓDIGO TRATADO'][i]
-                    #                 qtde = str(base_filtrada['QTD PROD'][i])
-                    #                 data = base_filtrada['DATA'][i]
-                    #                 pessoa = base_filtrada['MATRÍCULA'][i]
-                    #                 linha = base_filtrada['index'][i]
-                    #                 c = preenchendo_estamparia(nav,data,pessoa,peca,qtde,wks1,c,linha)
-                    #                 time.sleep(1.5)
-                    #                 print("c: ", c)
-                    #                 if c == 23:
-                    #                     c = 21               
+                            for i in range(len(base_filtrada)):
+                                nav.delete_all_cookies()
+                                print("i: ", i)
+                                try:
+                                    peca = base_filtrada['CÓDIGO TRATADO'][i]
+                                    qtde = str(base_filtrada['QTD PROD'][i])
+                                    data = base_filtrada['DATA'][i]
+                                    pessoa = base_filtrada['MATRÍCULA'][i]
+                                    linha = base_filtrada['index'][i]
+                                    c = preenchendo_estamparia(nav,data,pessoa,peca,qtde,wks1,c,linha)
+                                    time.sleep(1.5)
+                                    print("c: ", c)
+                                    if c == 23:
+                                        c = 21               
 
-                    #                 nav.delete_all_cookies() 
+                                    nav.delete_all_cookies() 
                                 
-                    #             except:
-                    #                 break
+                                except:
+                                    break
 
-                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Montagem']) > 0:                
+                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Montagem']) > 0:                
                     
-                    #     print('indo para montagem')
+                        print('indo para montagem')
 
-                    #     time.sleep(2)
+                        time.sleep(2)
 
-                    #     wks2.update("E" + "5", 'APONT. MONTAGEM: ') 
+                        wks2.update("E" + "5", 'APONT. MONTAGEM: ') 
 
-                    #     wks1, base, base_filtrada = planilha_montagem(filename, data)
-                    #     base_filtrada = base_filtrada.reset_index()
-
-                    #     if not len(base_filtrada) == 0:
-
-                    #         time.sleep(2)
-                    #         nav.switch_to.default_content()
-                    #         menu_innovaro(nav)
-                    #         time.sleep(3)
-                            
-                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                    #         time.sleep(1.5)
-                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
-                            
-                    #         lista_menu[click_producao].click() ##clicando em producao
-                    #         time.sleep(1.5)
-                            
-                    #         c = 3
-                    #         i = 0
-
-                    #         for i in range(len(base)+5):
-                    #             print("i: ", i)
-                    #             nav.delete_all_cookies()
-                    #             try:
-                    #                 peca = base_filtrada['Código'][i]
-                    #                 qtde = str(base_filtrada['Qtd prod'][i])
-                    #                 data = base_filtrada['Data de apontamento'][i]
-                    #                 pessoa = base_filtrada['Funcionário'][i]
-                    #                 linha = base_filtrada['index'][i]
-                    #                 c = preenchendo_montagem(nav,data,pessoa,peca,qtde,wks1,c,linha)
-                    #                 time.sleep(1.5)
-                    #                 print("c: ", c)
-                    #                 if c == 23:
-                    #                     c = 21        
-
-                    #                 nav.delete_all_cookies() 
-                            
-                    #             except:
-                    #                 break
-                        
-                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Pintura']) > 0:
-
-                        print('indo para pintura')
-
-                        time.sleep(2)            
-
-                        wks2.update("E" + "5", 'APONT. PINTURA: ') 
-
-                        wks1, base, base_filtrada, pessoa = planilha_pintura(filename, data)
-                        
+                        wks1, base, base_filtrada = planilha_montagem(filename, data)
                         base_filtrada = base_filtrada.reset_index()
 
                         if not len(base_filtrada) == 0:
@@ -3573,37 +3524,86 @@ def funcao_main():
                             time.sleep(3)
                             
                             lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                            time.sleep(2)
+                            time.sleep(1.5)
                             click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                             
                             lista_menu[click_producao].click() ##clicando em producao
                             time.sleep(1.5)
                             
                             c = 3
-
                             i = 0
 
                             for i in range(len(base)+5):
                                 print("i: ", i)
+                                nav.delete_all_cookies()
                                 try:
                                     peca = base_filtrada['Código'][i]
-                                    qtde = str(base_filtrada['Qtd'][i])
+                                    qtde = str(base_filtrada['Qtd prod'][i])
                                     data = base_filtrada['Data de apontamento'][i]
-                                    tipo = base_filtrada['Tipo'][i]
-                                    cor = base_filtrada['Cor'][i]
-                                    pessoa = pessoa
+                                    pessoa = base_filtrada['Funcionário'][i]
                                     linha = base_filtrada['index'][i]
-                                    print(peca, '', '',qtde, '', '',data, '', '',pessoa)
-                                    c = preenchendo_pintura(nav,data, pessoa, peca, qtde,tipo, cor, wks1, c, linha)
+                                    c = preenchendo_montagem(nav,data,pessoa,peca,qtde,wks1,c,linha)
                                     time.sleep(1.5)
                                     print("c: ", c)
                                     if c == 23:
-                                        c = 21       
-                                    
+                                        c = 21        
+
                                     nav.delete_all_cookies() 
-                                
+                            
                                 except:
                                     break
+                        
+                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Pintura']) > 0:
+
+                    #     print('indo para pintura')
+
+                    #     time.sleep(2)            
+
+                    #     wks2.update("E" + "5", 'APONT. PINTURA: ') 
+
+                    #     wks1, base, base_filtrada, pessoa = planilha_pintura(filename, data)
+                        
+                    #     base_filtrada = base_filtrada.reset_index()
+
+                    #     if not len(base_filtrada) == 0:
+
+                    #         time.sleep(2)
+                    #         nav.switch_to.default_content()
+                    #         menu_innovaro(nav)
+                    #         time.sleep(3)
+                            
+                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                    #         time.sleep(2)
+                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                            
+                    #         lista_menu[click_producao].click() ##clicando em producao
+                    #         time.sleep(1.5)
+                            
+                    #         c = 3
+
+                    #         i = 0
+
+                    #         for i in range(len(base)+5):
+                    #             print("i: ", i)
+                    #             try:
+                    #                 peca = base_filtrada['Código'][i]
+                    #                 qtde = str(base_filtrada['Qtd'][i])
+                    #                 data = base_filtrada['Data de apontamento'][i]
+                    #                 tipo = base_filtrada['Tipo'][i]
+                    #                 cor = base_filtrada['Cor'][i]
+                    #                 pessoa = pessoa
+                    #                 linha = base_filtrada['index'][i]
+                    #                 print(peca, '', '',qtde, '', '',data, '', '',pessoa)
+                    #                 c = preenchendo_pintura(nav,data, pessoa, peca, qtde,tipo, cor, wks1, c, linha)
+                    #                 time.sleep(1.5)
+                    #                 print("c: ", c)
+                    #                 if c == 23:
+                    #                     c = 21       
+                                    
+                    #                 nav.delete_all_cookies() 
+                                
+                    #             except:
+                    #                 break
 
                     time.sleep(2)            
 
