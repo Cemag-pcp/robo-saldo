@@ -2727,10 +2727,10 @@ def consulta_saldo(data, nav):
             tabelona = tabelona.dropna()
             # tabelona = tabelona.iloc[:-3]
 
-            if qtde_itens == 1:
-                tabelona = tabelona[:1]
-            else:
-                tabelona = tabelona[:len(tabelona)-2]
+            # if qtde_itens == 1:
+            #     tabelona = tabelona[:1]
+            # else:
+            #     tabelona = tabelona[:len(tabelona)-2]
 
             #quebrando_material = tabelona["Unnamed: 0_level_2"].str.split(" ", n = 1, expand = True)
 
@@ -2934,10 +2934,10 @@ def consulta_saldo_chapas(data, nav):
             # tabelona = tabelona.dropna()
             # tabelona = tabelona.reset_index(drop=True)
             
-            if qtde_itens == 1:
-                tabelona = tabelona[:1]
-            else:
-                tabelona = tabelona[:len(tabelona)-2]
+            # if qtde_itens == 1:
+            #     tabelona = tabelona[:1]
+            # else:
+            #     tabelona = tabelona[:len(tabelona)-2]
 
             #quebrando_material = tabelona["Unnamed: 0_level_2"].str.split(" ", n = 1, expand = True)
 

@@ -3,6 +3,7 @@ import threading
 from flask import Flask, render_template, jsonify
 
 from selenium import webdriver
+
 from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import time
@@ -116,8 +117,8 @@ def acessar_innovaro():
 
 def login(nav):
     #logando 
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]'))).send_keys("luan araujo")
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("luanaraujo5")
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]'))).send_keys("ti.dev")
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("cem@1616")
 
     time.sleep(2)
 
@@ -555,7 +556,7 @@ def planilha_usinagem(filename, data):
 
     base = wks1.get()
     base = pd.DataFrame(base)
-    base = base.iloc[:,0:7]
+    base = base.iloc[:,0:8]
     base = base.set_axis(headers, axis=1)[5:]
 
     ########### Tratando planilhas ###########
@@ -926,7 +927,7 @@ def planilha_pintura(filename, data):
     # sh = sa.open(sheet)
 
     sheet_id = '180NO52JDMnoQ4COIipTDenkYTdz3f39PfBIcNYCKQLE'
-    worksheet1 = 'RQ PCP 002-000 (APONTAMENTO PINTURA)'
+    worksheet1 = 'RQ PCP 015-000 (APONTAMENTO PINTURA)'
 
     sa = gspread.service_account(filename)
     sh = sa.open_by_key(sheet_id)
@@ -939,7 +940,7 @@ def planilha_pintura(filename, data):
 
     headers = wks1.row_values(5)#[0:3]
 
-    base = base.iloc[0:,0:24]
+    base = base.iloc[0:,0:12]
 
     base = base.set_axis(headers, axis=1)[5:]
 
@@ -2564,6 +2565,8 @@ def preenchendo_pintura(nav, data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
                     
                 time.sleep(2)
                 
+                tabelona = None
+
                 tabelona = pd.read_html(str(table_html_prod), header=None)
                 tabelona = tabelona[0].iloc[1:]
                 
@@ -2574,35 +2577,224 @@ def preenchendo_pintura(nav, data, pessoa, peca, qtde,tipo, cor, wks1, c, i):
 
                 tabelona = tabelona.dropna(subset='Recurso')
                 
-                quantidade_catalisador = tabelona[tabelona['Recurso'].str.contains('CATA')]
+                tabelona = tabelona.reset_index(drop=True)
 
-                tabelona.iloc[:,10:]
+                tabelona['localizacao_tabela'] = range(3, 3 + 2 * len(tabelona), 2)
+
+                quantidade_po = None
+                localizacao_po = None
+                quantidade_catalisador = None
+                localizacao_catalisador = None
+                quantidade_pu = None
+                localizacao_pu = None
+                cor_antiga = None
+
+                df_cores = pd.read_csv('tintas_csv.csv',sep=';') 
+                
+                if tipo == 'PÓ':
+                    tipo = 'PO'
+
+                cor_ = df_cores[(df_cores['COR_SIGLA'] == cor) & (df_cores['TIPO'] == tipo)]['CÓDIGO'].values[0]
+
+                try:
+                    quantidade_catalisador = pd.to_numeric(tabelona[tabelona['Recurso'].str.contains('CATA')]['Quantidade']).values[0]
+                    localizacao_catalisador = tabelona[tabelona['Recurso'].str.contains('CATA')]['localizacao_tabela'].values[0]
+                except:
+                    pass
+
+                try:
+                    quantidade_pu = pd.to_numeric(tabelona[tabelona['Recurso'].str.contains('ESM. PU')]['Quantidade']).values[0]
+                    localizacao_pu = tabelona[tabelona['Recurso'].str.contains('ESM. PU')]['localizacao_tabela'].values[0]
+                    cor_antiga = tabelona[tabelona['Recurso'].str.contains('ESM. PU')]['Recurso'].values[0].split(' ')[0]
+                except:
+                    pass
+
+                try:
+                    quantidade_po = pd.to_numeric(tabelona[tabelona['Recurso'].str.contains('TINTA PÓ')]['Quantidade']).values[0]
+                    localizacao_po = tabelona[tabelona['Recurso'].str.contains('TINTA PÓ')]['localizacao_tabela'].values[0]
+                    cor_antiga = tabelona[tabelona['Recurso'].str.contains('TINTA PÓ')]['Recurso'].values[0].split(' ')[0]
+                except:
+                    pass
 
                 qtd_linhas = len(tabelona)
-
-                # celula_innovaro = qtd_linhas
+                linha_maxima = tabelona['localizacao_tabela'].max()
 
                 if tipo == 'PU':
 
                     # verificando se contem catalisador
                     if len(tabelona[tabelona['Recurso'].str.contains('CATA')]) == 1:
-                        return
+                        return c
                     else:
+                        calculo_pu = quantidade_po * 1.58
+                        calculo_catalisador = calculo_pu / 6
+                        
+                        time.sleep(.5)
                         # clicar em insert
                         WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
                         
+                        time.sleep(.5)
                         # clicando em deposito
-                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="{qtd_linhas}"]/td[7]/div/div'))).click()
-                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="{qtd_linhas}"]/td[7]/div/input'))).send_keys("Pintura")
-                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="{qtd_linhas}"]/td[7]/div/input'))).send_keys(Keys.TAB)
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[7]/div'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[7]/div/input'))).send_keys("Pintura")
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[7]/div/input'))).send_keys(Keys.TAB)
 
-                        # inputando recurso
-                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="{qtd_linhas}"]/td[9]/div/input'))).send_keys('313210')
-                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="{qtd_linhas}"]/td[9]/div/input'))).send_keys(Keys.TAB)
+                        time.sleep(.5)
+                        # inputando recurso Cor
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[9]/div/input'))).send_keys(str(cor_))
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[9]/div/input'))).send_keys(Keys.TAB)
 
+                        time.sleep(.5)
                         # inputando quantidade
-                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="{qtd_linhas}"]/td[9]/div/input'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[26]/div'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[26]/div/input'))).send_keys(calculo_pu)
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[26]/div/input'))).send_keys(Keys.TAB)
 
+                        time.sleep(.5)
+                        # insert
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="movDeposConsumidos"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]'))).click()
+                            
+                        ######### CATALISADOR #########            
+                        
+                        time.sleep(.5)
+                        # clicar em insert
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
+
+                        time.sleep(.5)
+                        # clicando em deposito
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[7]/div'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[7]/div/input'))).send_keys("Pintura")
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[7]/div/input'))).send_keys(Keys.TAB)
+
+                        time.sleep(.5)
+                        # inputando recurso Catalisador
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[9]/div/input'))).send_keys('313210')
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[9]/div/input'))).send_keys(Keys.TAB)
+
+                        time.sleep(.5)
+                        # inputando quantidade
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[26]/div'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[26]/div/input'))).send_keys(calculo_catalisador)
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+4}]/td[26]/div/input'))).send_keys(Keys.TAB)
+
+
+                        time.sleep(.5)
+                        # insert
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="movDeposConsumidos"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]'))).click()
+                    
+                        time.sleep(.5)
+                        # selecionando po
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{localizacao_po}]/td[1]/input'))).click()
+
+                        time.sleep(.5)
+                        # apagando po
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="movDeposConsumidos"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[3]'))).click()
+                        
+                        time.sleep(.5)
+                        # confirmando
+                        nav.switch_to.default_content()
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/table/tbody/tr/td[2]/div/div[2]'))).click()
+
+                        time.sleep(.5)
+                        #confirmando tabela de cima
+                        iframes(nav)
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div'))).click()
+
+                        time.sleep(.5)
+                        # verifica se deu erro
+                        nav.switch_to.default_content()
+
+                        texto_erro_consumivel = ''
+
+                        try:
+                            texto_erro_consumivel = WebDriverWait(nav, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[9]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                        except:
+                            wks1.update('L' + str(i+1), "Ok troca de consumível" + ' - ' + data_hoje() + ' ' + hora_atual())
+                            print("novo c")
+                            return (c)
+                        
+                        # ok no erro se tiver
+                        if texto_erro_consumivel:
+                            WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[9]/div[2]/table/tbody/tr[2]/td/div/button'))).click()
+
+                        wks1.update('L' + str(i+1), texto_erro_consumivel + ' - ' + data_hoje() + ' ' + hora_atual())
+                        c = 3
+
+                elif tipo == 'PO':
+                    
+                    if len(tabelona[tabelona['Recurso'].str.contains('TINTA PÓ')]) == 1:
+                        return c
+                    else:
+                        #calculando quantidade de po
+                        calculo_po = quantidade_pu / 1.58
+
+                        time.sleep(.5)
+                        # clicar em insert
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[2]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
+                        
+                        time.sleep(.5)
+                        # clicando em deposito
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[7]/div'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[7]/div/input'))).send_keys("Pintura")
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[7]/div/input'))).send_keys(Keys.TAB)
+
+                        time.sleep(.5)
+                        # inputando recurso
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[9]/div/input'))).send_keys(str(cor_))
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[9]/div/input'))).send_keys(Keys.TAB)
+
+                        # inputando recurso substituido (codigo antigo)
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[11]/div/input'))).send_keys(cor_antiga)
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[11]/div/input'))).send_keys(Keys.TAB)
+
+                        time.sleep(.5)
+                        # inputando quantidade
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[26]/div'))).click()
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[26]/div/input'))).send_keys(calculo_po)
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{linha_maxima+2}]/td[26]/div/input'))).send_keys(Keys.TAB)
+
+
+                        time.sleep(.5)
+                        # insert
+                        WebDriverWait(nav, 5).until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="movDeposConsumidos"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]'))).click()
+
+                        time.sleep(.5)
+                        # selecionando catalisador e pu
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{localizacao_pu}]/td[1]/input'))).click()
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/table/tbody/tr[2]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[{localizacao_catalisador}]/td[1]/input'))).click()
+                        
+                        time.sleep(.5)
+                        # apagando
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="movDeposConsumidos"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[3]'))).click()
+                        
+                        time.sleep(.5)
+                        # confirmando
+                        nav.switch_to.default_content()
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[8]/table/tbody/tr/td[2]/div/div[2]'))).click()
+
+                        time.sleep(.5)
+                        #confirmando tabela de cima
+                        iframes(nav)
+                        WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div'))).click()
+
+                        time.sleep(.5)
+                        # verifica se deu erro
+                        nav.switch_to.default_content()
+                        
+                        texto_erro_consumivel = None
+
+                        try:
+                            texto_erro_consumivel = WebDriverWait(nav, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[9]/div[2]/table/tbody/tr[1]/td[2]/div/div/span[1]'))).text
+                        except:
+                            wks1.update('L' + str(i+1), "Ok troca de consumível" + ' - ' + data_hoje() + ' ' + hora_atual())
+                            print("novo c")
+                            return (c)
+
+                        # ok no erro se tiver
+                        if texto_erro_consumivel:
+                            WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[9]/div[2]/table/tbody/tr[2]/td/div/button'))).click()
+
+                        wks1.update('L' + str(i+1), texto_erro_consumivel + ' - ' + data_hoje() + ' ' + hora_atual())
+                        c = 3
 
             time.sleep(2)
 
@@ -3358,57 +3550,57 @@ def funcao_main():
                                 except:
                                     break
                         
-                    # if len(lista_ativadores[lista_ativadores['Setor'] == 'Pintura']) > 0:
+                    if len(lista_ativadores[lista_ativadores['Setor'] == 'Pintura']) > 0:
 
-                    #     print('indo para pintura')
+                        print('indo para pintura')
 
-                    #     time.sleep(2)            
+                        time.sleep(2)            
 
-                    #     wks2.update("E" + "5", 'APONT. PINTURA: ') 
+                        wks2.update("E" + "5", 'APONT. PINTURA: ') 
 
-                    #     wks1, base, base_filtrada, pessoa = planilha_pintura(filename, data)
+                        wks1, base, base_filtrada, pessoa = planilha_pintura(filename, data)
                         
-                    #     base_filtrada = base_filtrada.reset_index()
+                        base_filtrada = base_filtrada.reset_index()
 
-                    #     if not len(base_filtrada) == 0:
+                        if not len(base_filtrada) == 0:
 
-                    #         time.sleep(2)
-                    #         nav.switch_to.default_content()
-                    #         menu_innovaro(nav)
-                    #         time.sleep(3)
+                            time.sleep(2)
+                            nav.switch_to.default_content()
+                            menu_innovaro(nav)
+                            time.sleep(3)
                             
-                    #         lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
-                    #         time.sleep(2)
-                    #         click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
+                            lista_menu, test_list = listar(nav, 'webguiTreeNodeLabel')
+                            time.sleep(2)
+                            click_producao = test_list.loc[test_list[0] == 'Apontamento da produção'].reset_index(drop=True)['index'][0]
                             
-                    #         lista_menu[click_producao].click() ##clicando em producao
-                    #         time.sleep(1.5)
+                            lista_menu[click_producao].click() ##clicando em producao
+                            time.sleep(1.5)
                             
-                    #         c = 3
+                            c = 3
 
-                    #         i = 0
+                            i = 0
 
-                    #         for i in range(len(base)+5):
-                    #             print("i: ", i)
-                    #             try:
-                    #                 peca = base_filtrada['Código'][i]
-                    #                 qtde = str(base_filtrada['Qtd'][i])
-                    #                 data = base_filtrada['Data de apontamento'][i]
-                    #                 tipo = base_filtrada['Tipo'][i]
-                    #                 cor = base_filtrada['Cor'][i]
-                    #                 pessoa = pessoa
-                    #                 linha = base_filtrada['index'][i]
-                    #                 print(peca, '', '',qtde, '', '',data, '', '',pessoa)
-                    #                 c = preenchendo_pintura(nav,data, pessoa, peca, qtde,tipo, cor, wks1, c, linha)
-                    #                 time.sleep(1.5)
-                    #                 print("c: ", c)
-                    #                 if c == 23:
-                    #                     c = 21       
+                            for i in range(len(base)+5):
+                                print("i: ", i)
+                                try:
+                                    peca = base_filtrada['Código'][i]
+                                    qtde = str(base_filtrada['Qtd'][i])
+                                    data = base_filtrada['Data de apontamento'][i]
+                                    tipo = base_filtrada['Tipo'][i]
+                                    cor = base_filtrada['Cor'][i]
+                                    pessoa = pessoa
+                                    linha = base_filtrada['index'][i]
+                                    print(peca, '', '',qtde, '', '',data, '', '',pessoa)
+                                    c = preenchendo_pintura(nav,data, pessoa, peca, qtde,tipo, cor, wks1, c, linha)
+                                    time.sleep(1.5)
+                                    print("c: ", c)
+                                    if c == 23:
+                                        c = 21       
                                     
-                    #                 nav.delete_all_cookies() 
+                                    nav.delete_all_cookies() 
                                 
-                    #             except:
-                    #                 break
+                                except:
+                                    break
 
                     time.sleep(2)            
 
