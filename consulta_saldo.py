@@ -50,9 +50,9 @@ def login(nav):
     try:
         # logando
         WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
-            (By.XPATH, '//*[@id="username"]'))).send_keys("assistente almoxarifado")
+            (By.XPATH, '//*[@id="username"]'))).send_keys("Ti.prod")
         WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
-            (By.XPATH, '//*[@id="password"]'))).send_keys("cem@#1571")
+            (By.XPATH, '//*[@id="password"]'))).send_keys("Cem@@1600")
         WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
             (By.XPATH, '//*[@id="password"]'))).send_keys(Keys.ENTER)
 
@@ -164,6 +164,34 @@ def input_deposito(nav):
         logging.error(f"Ocorreu um erro no input do depósito: {e}")
 
 
+def input_deposito_levantamento(nav):
+
+    try:
+
+        deposito = WebDriverWait(nav, 1).until(EC.element_to_be_clickable(
+            (By.XPATH, '//*[@id="vars"]/tbody/tr[1]/td[1]/table/tbody/tr[8]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input')))
+        time.sleep(0.5)
+        deposito.send_keys(Keys.CONTROL + 'a')
+        time.sleep(0.5)
+        deposito.send_keys('Almox Mont Carretas;Almox Cx Acessórios;Almox Pintura - Embalagem;Almox Prod Especiais;Almox Corte e Estamparia;Almox Serra;Almox Usinagem')
+        time.sleep(0.5)
+        deposito.send_keys(Keys.TAB)
+        time.sleep(0.5)
+        
+        try:
+            WebDriverWait(nav, 3).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/form/table/thead/tr[2]/td[1]/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/span[2]'))).click()
+            time.sleep(0.5)
+            deposito.send_keys(Keys.TAB)
+            time.sleep(0.5)
+        except:
+            pass
+
+        logging.info("Inputando o depósito")
+
+    except Exception as e:
+        logging.error(f"Ocorreu um erro no input do depósito: {e}")
+
+
 def limpar_recursos(nav):
 
     try:
@@ -181,6 +209,33 @@ def limpar_recursos(nav):
 
     except Exception as e:
         logging.error(f"Ocorreu um erro limpeza dos recursos: {e}")
+
+
+def inserir_agrupamentos_levantamento(nav):
+
+    iframes(nav)
+    agrupamento_1 = WebDriverWait(nav, 1).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[20]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input')))
+    time.sleep(0.5)
+    agrupamento_1.send_keys(Keys.CONTROL + 'a')
+    time.sleep(0.5)
+    agrupamento_1.send_keys('Etapa')
+    time.sleep(0.5)
+    agrupamento_1.send_keys(Keys.TAB)
+    time.sleep(0.5)
+
+
+def inserir_agrupamentos_almox(nav):
+
+    agrupamento_1 = WebDriverWait(nav, 1).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[20]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input')))
+    time.sleep(0.5)
+    agrupamento_1.send_keys(Keys.CONTROL + 'a')
+    time.sleep(0.5)
+    agrupamento_1.send_keys('Classe de Recursos')
+    time.sleep(0.5)
+    agrupamento_1.send_keys(Keys.TAB)
+    time.sleep(0.5)
 
 
 def guardado_codigos():
@@ -393,6 +448,61 @@ def exportar(nav):
         logging.error(f"Ocorreu um erro ao clicar em exportar: {e}")
 
 
+def exportar_2(nav):
+
+    saida_iframe(nav)
+
+    # exportar primeira tela
+    WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/span[2]'))).click()
+
+    loading = WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
+        (By.XPATH, '//*[@id="content_statusMessageBox"]')))
+
+    while loading:
+        print('carregando')
+        
+        try:
+            loading = WebDriverWait(nav, 1).until(EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="content_statusMessageBox"]')))
+        except:
+            loading = None
+            break
+    
+    loading_2 = WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
+        (By.XPATH, '//*[@id="progressMessageBox"]')))
+    
+    while loading_2:
+        print('carregando')
+        
+        try:
+            loading_2 = WebDriverWait(nav, 1).until(EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="progressMessageBox"]')))
+        except:
+            loading_2 = None
+            break
+
+    # exportar da segunda tela
+    WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td/span[2]'))).click()
+
+    # op~çao de excel
+    WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/div[8]/table/tbody/tr/td[2]/div/div/div[2]'))).click()
+
+    # executar
+    WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/div[4]/div[2]/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]/span[2]'))).click()
+
+    # clique aqui para fazer download do arquivo
+    iframes(nav)
+
+    botao_download = WebDriverWait(nav, 999).until(EC.element_to_be_clickable(
+        (By.XPATH, '/html/body/span')))
+
+    botao_download.click()
+
+
 def saida_iframe(nav):
     try:
         nav.switch_to.default_content()
@@ -470,6 +580,52 @@ def inserir_gspread():
     df_values = df.values.tolist()
     
     planilha.values_append("BD_saldo_diario", {'valueInputOption': 'RAW'}, {'values': df_values})
+
+    return 'sucess'
+
+
+def inserir_gspread_saldo_levantamento():
+
+    df = ultimo_arquivo()
+
+    # Autentique-se com a API do Google Sheets (configure o caminho para suas credenciais)
+    # gc = gspread.service_account(filename=r'C:\Users\Engine\automacao_saldo_almoc\service_account_cemag.json')
+    gc = gspread.service_account(filename='service_account.json')
+
+    # Abra a planilha com base no ID
+    planilha = gc.open_by_key("1u2Iza-ocp6ROUBXG9GpfHvEJwLHuW7F2uiO583qqLIE")
+
+    # Acessar a aba "BD_saldo_diario"
+    aba = planilha.worksheet("saldo de recurso")
+
+    # Defina o intervalo (range) que você deseja apagar (por exemplo, A2:H5)
+    range_to_clear = "A2:Z"
+    
+    # Obtém a lista de células no intervalo especificado
+    cell_list = aba.range(range_to_clear)
+    
+    # Define o valor de todas as células no intervalo como uma string vazia ('')
+    for cell in cell_list:
+        cell.value = ""
+    
+    # Atualiza as células no intervalo com os valores vazios
+    aba.update_cells(cell_list)
+    
+    df.rename(columns=lambda x: x.replace('="', '').replace('"', ''), inplace=True)
+    
+    df = df.applymap(lambda x: str(x).replace('="', '').replace('"', ''))
+
+    df['Saldo'] = df['Saldo'].apply(lambda x: float(x.replace(".","").replace(",",".")))
+    df['Custo#Total'] = df['Custo#Total'].apply(lambda x: float(x.replace(".","").replace(",",".")))
+    df['Custo#Médio'] = df['Custo#Médio'].apply(lambda x: float(x.replace(".","").replace(",",".")))
+    
+    df = df[df['2o. Agrupamento'] == 'nan']
+
+    df['3o. Agrupamento'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
+
+    df_values = df.values.tolist()
+
+    planilha.values_append("saldo de recurso", {'valueInputOption': 'RAW'}, {'values': df_values})
 
     return 'sucess'
 

@@ -1,7 +1,5 @@
 from flask import Flask, render_template, jsonify
 import threading
-from flask import Flask, render_template, jsonify
-
 from selenium import webdriver
 
 from selenium.webdriver.common.keys import Keys
@@ -102,14 +100,15 @@ def mes_atual():
 
 def acessar_innovaro():
     
-    link1 = "http://192.168.3.141/"
+    # link1 = "http://192.168.3.141/"
     #link1 = 'http://cemag.innovaro.com.br/sistema'
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
+    link3 = 'https://hcemag.innovaro.com.br/sistema'
     # nav = webdriver.Chrome(r"C:\Users\Engine\chromedriver.exe")
-    nav = webdriver.Chrome("chromedriver.exe")
+    nav = webdriver.Chrome()
     nav.maximize_window()
     time.sleep(2)
-    nav.get(link1)
+    nav.get(link3)
 
     return(nav)
 
@@ -117,8 +116,8 @@ def acessar_innovaro():
 
 def login(nav):
     #logando 
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]'))).send_keys("ti.dev")
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("cem@1616")
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]'))).send_keys("luan araujo")
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("luanaraujo1234")
 
     time.sleep(2)
 
@@ -3652,3 +3651,55 @@ def acionar_script():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050)
+
+
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]/input'))).clear()
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]/input'))).send_keys('Produção por Máquina')
+
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).clear()
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('03/04/2024')
+
+time.sleep(2)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input'))).send_keys(Keys.BACK_SPACE)
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('4292')
+
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[7]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[7]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[7]/td[2]/table/tbody/tr/td[1]/input'))).clear()
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[7]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('033020')
+
+
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[9]/td[4]/table/tbody/tr/td[1]/input'))).click()
+time.sleep(3)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[9]/td[4]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[9]/td[4]/table/tbody/tr/td[1]/input'))).send_keys(Keys.CONTROL + 'a')
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[9]/td[4]/table/tbody/tr/td[1]/input'))).send_keys(Keys.BACK_SPACE)
+
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[9]/td[4]/table/tbody/tr/td[1]/input'))).send_keys('S Estamparia')
+
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[13]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[13]/td[2]/table/tbody/tr/td[1]/input'))).click()
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[13]/td[2]/table/tbody/tr/td[1]/input'))).clear()
+time.sleep(0.5)
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="producoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[13]/td[2]/table/tbody/tr/td[1]/input'))).send_keys('0')
+
+time.sleep(3)
+
+WebDriverWait(nav, 1).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]/div'))).click()
+time.sleep(3)
+
+WebDriverWait(nav, 60).until(EC.element_to_be_clickable((By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]/div'))).click()
