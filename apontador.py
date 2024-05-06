@@ -100,15 +100,15 @@ def mes_atual():
 
 def acessar_innovaro():
     
-    # link1 = "http://192.168.3.141/"
-    #link1 = 'http://cemag.innovaro.com.br/sistema'
-    #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-    link3 = 'https://hcemag.innovaro.com.br/sistema'
-    # nav = webdriver.Chrome(r"C:\Users\Engine\chromedriver.exe")
-    nav = webdriver.Chrome()
+    link1 = "http://192.168.3.141/"
+    # link1 = 'http://cemag.innovaro.com.br/sistema'
+    # link1 = 'http://devcemag.innovaro.com.br:81/sistema'
+    # link3 = 'https://hcemag.innovaro.com.br/sistema'
+    nav = webdriver.Chrome(r"C:\Users\Engine\chromedriver.exe")
+    # nav = webdriver.Chrome()
     nav.maximize_window()
     time.sleep(2)
-    nav.get(link3)
+    nav.get(link1)
 
     return(nav)
 
@@ -117,7 +117,7 @@ def acessar_innovaro():
 def login(nav):
     #logando 
     WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]'))).send_keys("luan araujo")
-    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("luanaraujo1234")
+    WebDriverWait(nav, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))).send_keys("luanaraujo6")
 
     time.sleep(2)
 

@@ -196,7 +196,7 @@ def limpar_recursos(nav):
 
     try:
         recursos = WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
-            (By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input')))
+            (By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/input')))
         time.sleep(0.5)
         recursos.send_keys(Keys.CONTROL + 'a')
         time.sleep(0.5)
@@ -269,7 +269,7 @@ def inputar_recurso(nav):
         iframes(nav)
 
         recursos = WebDriverWait(nav, wait).until(EC.element_to_be_clickable(
-            (By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input')))
+            (By.XPATH, '/html/body/div[2]/form/table/tbody/tr[1]/td[1]/table/tbody/tr[10]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/input')))
         time.sleep(0.5)
         recursos.click()
         time.sleep(0.5)
