@@ -18,6 +18,9 @@ import datetime
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 from utils import *
+
+from selenium.common.exceptions import SessionNotCreatedException
+
 # https://googlechromelabs.github.io/chrome-for-testing/#stable
 # https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints
 
@@ -100,12 +103,21 @@ def mes_atual():
     
     return str(mes_atual)
 
+
+
+
 def acessar_innovaro():
     
     link1 = "http://192.168.3.141/"
     #link1 = 'http://cemag.innovaro.com.br/sistema'
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-    nav = webdriver.Chrome()
+    
+    try:
+        nav = webdriver.Chrome(r"C:\Users\Engine\robo-saldo\robo-saldo\chromedriver_extracted\chromedriver-win32\chromedriver.exe")
+    except:
+        chrome_driver_path = verificar_chrome_driver()
+        nav = webdriver.Chrome(chrome_driver_path)
+
     #nav = webdriver.Chrome()
     nav.maximize_window()
     time.sleep(2)
@@ -3044,13 +3056,13 @@ def checkbox_apontamentos(filename):
 
 ##### onde o robô ta? #####
 
-sheet = 'CENTRAL DE APONTAMENTO'
-worksheet1 = 'PAINEL'
+# sheet = 'CENTRAL DE APONTAMENTO'
+# worksheet1 = 'PAINEL'
 
-sa = gspread.service_account(filename)
-sh = sa.open(sheet)
+# sa = gspread.service_account(filename)
+# sh = sa.open(sheet)
 
-wks2 = sh.worksheet(worksheet1)
+# wks2 = sh.worksheet(worksheet1)
 
 #data_dia_1 = '12/07/2023'
 
@@ -3079,6 +3091,50 @@ while True:
 
             while True:
 
+                print("Indo para saldo mp")
+                nav = acessar_innovaro()
+
+                #download saldo de recurso para central apenas materia prima
+                login(nav)
+
+                # Realizar download saldo de recurso
+                iframes(nav)
+                menu_innovaro(nav)
+                time.sleep(1)
+
+                navegar_consulta(nav)
+                time.sleep(1)
+
+                iframes(nav)
+                time.sleep(1)
+
+                input_data(nav)
+                time.sleep(1)
+                
+                input_deposito_apenas_central(nav)
+                time.sleep(1)
+
+                limpar_recursos(nav)
+                time.sleep(1)
+
+                inserir_agrupamentos_central_mp(nav)
+                time.sleep(1)
+
+                add_classe_recurso(nav)
+                time.sleep(1)
+
+                exportar_2(nav)
+                time.sleep(10)
+
+                inserir_gspread_saldo_central_mp()
+                time.sleep(1)
+                
+                fechar_menu_consulta(nav)
+                fechar_estoque(nav)
+                fechar_tabs(nav)
+
+                nav.close()
+
                 print("indo para saldo eric")
                 nav = acessar_innovaro()
 
@@ -3103,7 +3159,7 @@ while True:
                 input_deposito(nav)
                 time.sleep(1)
 
-                apagar_classe_recurso(nav)
+                apagar_mat_prima(nav)
                 time.sleep(1)
 
                 limpar_recursos(nav)
@@ -3125,7 +3181,6 @@ while True:
                 nav.close()
 
                 time.sleep(3)
-
 
                 print("Indo para saldo levantamento")
                 nav = acessar_innovaro()
@@ -3151,6 +3206,9 @@ while True:
                 limpar_recursos(nav)
                 time.sleep(1)
 
+                apagar_mat_prima(nav)
+                time.sleep(1)
+
                 inserir_agrupamentos_levantamento(nav)
                 time.sleep(1)
 
@@ -3169,47 +3227,6 @@ while True:
                 time.sleep(3)
                 
 
-
-                print("Indo para saldo mp")
-                nav = acessar_innovaro()
-
-                #download saldo de recurso para central apenas materia prima
-                login(nav)
-
-                # Realizar download saldo de recurso
-                iframes(nav)
-                menu_innovaro(nav)
-                time.sleep(1)
-
-                navegar_consulta(nav)
-                time.sleep(1)
-
-                iframes(nav)
-                time.sleep(1)
-                
-                input_deposito_apenas_central(nav)
-                time.sleep(1)
-
-                limpar_recursos(nav)
-                time.sleep(1)
-
-                inserir_agrupamentos_central_mp(nav)
-                time.sleep(1)
-
-                add_classe_recurso(nav)
-                time.sleep(1)
-
-                exportar_2(nav)
-                time.sleep(1)
-
-                inserir_gspread_saldo_central_mp()
-                time.sleep(1)
-                
-                fechar_menu_consulta(nav)
-                fechar_estoque(nav)
-                fechar_tabs(nav)
-
-                nav.close()
 
                 time.sleep(1800)
 
