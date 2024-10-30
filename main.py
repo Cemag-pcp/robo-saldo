@@ -110,13 +110,12 @@ def acessar_innovaro():
     #link1 = 'http://devcemag.innovaro.com.br:81/sistema'
     
     try:
-        nav = webdriver.Chrome(r"C:\Users\pcp2\robo-saldo\chromedriver_extracted\chromedriver-win32\chromedriver.exe")
+        nav = webdriver.Chrome(r"C:\Users\Engine\robo-saldo\robo-saldo\chromedriver_extracted\chromedriver-win32\chromedriver.exe")
     except:
         chrome_driver_path = verificar_chrome_driver()
         nav = webdriver.Chrome(chrome_driver_path)
 
     #nav = webdriver.Chrome()
-    nav.maximize_window()
     time.sleep(2)
     nav.get(link1)
 

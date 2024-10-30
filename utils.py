@@ -36,7 +36,7 @@ def acessar_innovaro():
         link1 = "http://192.168.3.141/"
         # link1 = 'http://cemag.innovaro.com.br/sistema'
         # link1 = 'http://devcemag.innovaro.com.br:81/sistema'
-        nav = webdriver.Chrome()
+        nav = webdriver.Chrome(r'C:\Users\Engine\robo-saldo\robo-saldo\chromedriver_extracted\chromedriver-win32\chromedriver.exe')
         # nav = webdriver.Chrome(r'C:\Users\Engine\chromedriver.exe')
         # nav = webdriver.Chrome(r'C:\Users\Engine\chromedriver.exe')
 
@@ -597,11 +597,12 @@ def ultimo_arquivo():
     df['data'] = datetime.datetime.today()
     df['data'] = df['data'].dt.strftime('%d/%m/%Y %H:%M:%S')
 
+    df.rename(columns=lambda x: x.replace('="', '').replace('"', ''), inplace=True)
+
     # df = df.drop(columns={'=" "'})
     # df.columns
-    df['="1o. Agrupamento"'] = df['="1o. Agrupamento"'].apply(lambda x: str(x).replace("=", "").replace('"', ''))
-    df['="2o. Agrupamento"'] = df['="2o. Agrupamento"'].apply(lambda x: str(x).replace("=", "").replace('"', ''))
-    df['="Recurso#Unid. Medida"'] = df['="Recurso#Unid. Medida"'].apply(lambda x: str(x).replace("=", "").replace('"', ''))
+    df["1o. Agrupamento"] = df["1o. Agrupamento"].apply(lambda x: str(x).replace("=", "").replace('"', ''))
+    df["2o. Agrupamento"] = df["2o. Agrupamento"].apply(lambda x: str(x).replace("=", "").replace('"', ''))
     
     return df
 
@@ -640,6 +641,7 @@ def inserir_gspread():
     df = df[['3o. Agrupamento',	'2o. Agrupamento','Recurso#Unid. Medida','Saldo','Custo#Total','Custo#Médio','data']]
     
     df['codigo'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
+    df['descricao'] = df['3o. Agrupamento'].apply(lambda x: x.split('-')[1])
     
     df_values = df.values.tolist()
     
@@ -675,10 +677,12 @@ def inserir_gspread_saldo_levantamento():
     
     df = df[df['2o. Agrupamento'] == 'nan']
 
-    df['3o. Agrupamento'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
-
-    df_values = df.values.tolist()
+    df['codigo'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
+    df['descricao'] = df['3o. Agrupamento'].apply(lambda x: x.split('-')[1])
     
+    df = df[['1o. Agrupamento','codigo','descricao','3o. Agrupamento','Saldo','Custo#Total','Custo#Médio','data']]
+    df_values = df.values.tolist()
+
     if len(df_values) > 0:
     
         # Obtém a lista de células no intervalo especificado
@@ -720,7 +724,10 @@ def inserir_gspread_saldo_central_mp():
     df['Custo#Total'] = df['Custo#Total'].apply(lambda x: float(x.replace(".","").replace(",",".")))
     df['Custo#Médio'] = df['Custo#Médio'].apply(lambda x: float(x.replace(".","").replace(",",".")))
     
-    df['3o. Agrupamento'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
+    df['codigo'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
+    df['descricao'] = df['3o. Agrupamento'].apply(lambda x: x.split('-')[1])
+
+    df = df[['1o. Agrupamento', 'codigo', 'descricao', 'Saldo','Custo#Total', 'Custo#Médio','data']]
 
     df_values = df.values.tolist()
 
